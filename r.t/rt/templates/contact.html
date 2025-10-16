@@ -1,0 +1,465 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Contact Us - Schafter{% endblock %}
+
+{% block content %}
+<section class="contact-section padding-large">
+  <div class="container">
+    <div class="row">
+      <div class="col-12 text-center mb-5">
+        <h1 class="display-5 text-uppercase fw-bold mb-3">Get In Touch</h1>
+        <p class="lead text-muted">We'd love to hear from you. Send us a message and we'll respond as soon as possible.</p>
+      </div>
+    </div>
+
+    <!-- Display Messages -->
+    {% if messages %}
+    <div class="row">
+      <div class="col-12">
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+          {{ message }}
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+    {% endif %}
+
+    <div class="row g-5">
+      <!-- Contact Information -->
+      <div class="col-lg-4">
+        <div class="contact-info-card card border-0 shadow-sm h-100">
+          <div class="card-body p-4">
+            <h3 class="card-title h4 text-uppercase mb-4">Contact Information</h3>
+            
+            <div class="contact-item d-flex align-items-start mb-4">
+              <div class="contact-icon me-3">
+                <i class="bi bi-envelope-fill text-primary fs-5"></i>
+              </div>
+              <div>
+                <h5 class="h6 mb-1">Email Us</h5>
+                <a href="mailto:revibe.threadss@gmail.com" class="text-decoration-none text-dark">
+                  revibe.threadss@gmail.com
+                </a>
+                <p class="small text-muted mb-0 mt-1">We'll respond within 24 hours</p>
+              </div>
+            </div>
+
+            <div class="contact-item d-flex align-items-start mb-4">
+              <div class="contact-icon me-3">
+                <i class="bi bi-clock-fill text-primary fs-5"></i>
+              </div>
+              <div>
+                <h5 class="h6 mb-1">Response Time</h5>
+                <p class="mb-1">24-48 hours</p>
+                <p class="small text-muted mb-0">During business days</p>
+              </div>
+            </div>
+
+            <div class="contact-item d-flex align-items-start mb-4">
+              <div class="contact-icon me-3">
+                <i class="bi bi-chat-dots-fill text-primary fs-5"></i>
+              </div>
+              <div>
+                <h5 class="h6 mb-1">Customer Support</h5>
+                <p class="mb-1">Dedicated support team</p>
+                <p class="small text-muted mb-0">For order inquiries & assistance</p>
+              </div>
+            </div>
+
+            <div class="contact-item d-flex align-items-start">
+              <div class="contact-icon me-3">
+                <i class="bi bi-shield-check-fill text-primary fs-5"></i>
+              </div>
+              <div>
+                <h5 class="h6 mb-1">Secure Communication</h5>
+                <p class="mb-1">Your data is protected</p>
+                <p class="small text-muted mb-0">We respect your privacy</p>
+              </div>
+            </div>
+
+            <hr class="my-4">
+
+            <div class="social-links">
+              <h6 class="text-uppercase mb-3">Follow Us</h6>
+              <div class="d-flex gap-3">
+                <a href="#" class="social-link btn btn-outline-dark btn-sm rounded-circle">
+                  <i class="bi bi-instagram"></i>
+                </a>
+                <a href="#" class="social-link btn btn-outline-dark btn-sm rounded-circle">
+                  <i class="bi bi-facebook"></i>
+                </a>
+                <a href="#" class="social-link btn btn-outline-dark btn-sm rounded-circle">
+                  <i class="bi bi-twitter"></i>
+                </a>
+                <a href="#" class="social-link btn btn-outline-dark btn-sm rounded-circle">
+                  <i class="bi bi-tiktok"></i>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Contact Form -->
+      <div class="col-lg-8">
+        <div class="contact-form-card card border-0 shadow-sm">
+          <div class="card-body p-4 p-md-5">
+            <h3 class="card-title h4 text-uppercase mb-4">Send us a Message</h3>
+            
+            <form id="contactForm" method="post" novalidate>
+              {% csrf_token %}
+              
+              {% if form.non_field_errors %}
+              <div class="alert alert-danger">
+                {% for error in form.non_field_errors %}
+                {{ error }}
+                {% endfor %}
+              </div>
+              {% endif %}
+              
+              <div class="row g-3">
+                <!-- Name Field -->
+                <div class="col-md-6">
+                  <label for="id_name" class="form-label">Full Name *</label>
+                  {{ form.name }}
+                  {% if form.name.errors %}
+                  <div class="invalid-feedback d-block">
+                    {% for error in form.name.errors %}
+                    {{ error }}
+                    {% endfor %}
+                  </div>
+                  {% endif %}
+                </div>
+                
+                <!-- Email Field -->
+                <div class="col-md-6">
+                  <label for="id_email" class="form-label">Email Address *</label>
+                  {{ form.email }}
+                  {% if form.email.errors %}
+                  <div class="invalid-feedback d-block">
+                    {% for error in form.email.errors %}
+                    {{ error }}
+                    {% endfor %}
+                  </div>
+                  {% endif %}
+                </div>
+                
+                <!-- Subject Field -->
+                <div class="col-12">
+                  <label for="id_subject" class="form-label">Subject *</label>
+                  {{ form.subject }}
+                  {% if form.subject.errors %}
+                  <div class="invalid-feedback d-block">
+                    {% for error in form.subject.errors %}
+                    {{ error }}
+                    {% endfor %}
+                  </div>
+                  {% endif %}
+                </div>
+                
+                <!-- Order Number Field -->
+                <div class="col-12">
+                  <label for="id_order_number" class="form-label">Order Number (Optional)</label>
+                  {{ form.order_number }}
+                  {% if form.order_number.errors %}
+                  <div class="invalid-feedback d-block">
+                    {% for error in form.order_number.errors %}
+                    {{ error }}
+                    {% endfor %}
+                  </div>
+                  {% endif %}
+                </div>
+                
+                <!-- Message Field -->
+                <div class="col-12">
+                  <label for="id_message" class="form-label">Message *</label>
+                  {{ form.message }}
+                  {% if form.message.errors %}
+                  <div class="invalid-feedback d-block">
+                    {% for error in form.message.errors %}
+                    {{ error }}
+                    {% endfor %}
+                  </div>
+                  {% endif %}
+                  <div class="form-text">Minimum 20 characters required.</div>
+                </div>
+                
+                <!-- Newsletter Field -->
+                <div class="col-12">
+                  <div class="form-check">
+                    {{ form.newsletter }}
+                    <label class="form-check-label" for="id_newsletter">
+                      Subscribe to our newsletter for updates and promotions
+                    </label>
+                  </div>
+                </div>
+                
+                <!-- Submit Button -->
+                <div class="col-12">
+                  <button type="submit" class="btn btn-dark btn-lg w-100 py-3" id="submitBtn">
+                    <i class="bi bi-send-fill me-2"></i>Send Message
+                  </button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- FAQ Section -->
+    <div class="row mt-5 pt-5">
+      <div class="col-12">
+        <div class="card border-0 bg-light">
+          <div class="card-body p-4 p-md-5">
+            <h3 class="text-center text-uppercase mb-4">Frequently Asked Questions</h3>
+            
+            <div class="row g-4">
+              <div class="col-md-6">
+                <div class="faq-item">
+                  <h5 class="h6 mb-2">How long does shipping take?</h5>
+                  <p class="small text-muted mb-0">Standard shipping takes 3-5 business days. Express shipping available for faster delivery.</p>
+                </div>
+              </div>
+              
+              <div class="col-md-6">
+                <div class="faq-item">
+                  <h5 class="h6 mb-2">What's your return policy?</h5>
+                  <p class="small text-muted mb-0">We offer 30-day returns for unworn items with original tags. Free returns for defective products.</p>
+                </div>
+              </div>
+              
+              <div class="col-md-6">
+                <div class="faq-item">
+                  <h5 class="h6 mb-2">Do you offer international shipping?</h5>
+                  <p class="small text-muted mb-0">Currently we ship within the country. International shipping coming soon!</p>
+                </div>
+              </div>
+              
+              <div class="col-md-6">
+                <div class="faq-item">
+                  <h5 class="h6 mb-2">How do I track my order?</h5>
+                  <p class="small text-muted mb-0">Tracking information is sent to your email once your order ships. You can also check in your account.</p>
+                </div>
+              </div>
+            </div>
+            
+            <div class="text-center mt-4">
+              <a href="#" class="btn btn-outline-dark">View All FAQs</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+.contact-section {
+  background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+}
+
+.contact-info-card,
+.contact-form-card {
+  border-radius: 16px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.contact-info-card:hover,
+.contact-form-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.1) !important;
+}
+
+.contact-icon {
+  width: 24px;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.contact-item {
+  padding: 0.5rem 0;
+}
+
+.social-link {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+}
+
+.social-link:hover {
+  background: #000 !important;
+  color: #fff !important;
+  transform: translateY(-2px);
+}
+
+.form-control,
+.form-select {
+  border-radius: 8px;
+  border: 2px solid #e9ecef;
+  padding: 0.75rem 1rem;
+  transition: all 0.3s ease;
+}
+
+.form-control:focus,
+.form-select:focus {
+  border-color: #000;
+  box-shadow: 0 0 0 0.2rem rgba(0, 0, 0, 0.1);
+}
+
+.form-label {
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: #333;
+}
+
+.faq-item {
+  padding: 1rem;
+  background: white;
+  border-radius: 8px;
+  border-left: 4px solid #000;
+}
+
+.btn-dark {
+  background: #000;
+  border: 2px solid #000;
+  border-radius: 8px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.btn-dark:hover {
+  background: #333;
+  border-color: #333;
+  transform: translateY(-2px);
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+  .contact-section {
+    padding: 2rem 0;
+  }
+  
+  .contact-info-card,
+  .contact-form-card {
+    margin-bottom: 2rem;
+  }
+  
+  .card-body {
+    padding: 1.5rem !important;
+  }
+  
+  .display-5 {
+    font-size: 2rem;
+  }
+  
+  .contact-item {
+    flex-direction: column;
+    text-align: center;
+  }
+  
+  .contact-icon {
+    margin-bottom: 0.5rem;
+    margin-right: 0 !important;
+  }
+  
+  .social-links {
+    text-align: center;
+  }
+  
+  .social-links .d-flex {
+    justify-content: center;
+  }
+}
+
+@media (max-width: 576px) {
+  .contact-section {
+    padding: 1rem 0;
+  }
+  
+  .card-body {
+    padding: 1rem !important;
+  }
+  
+  .btn-lg {
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
+  }
+  
+  .faq-item {
+    margin-bottom: 1rem;
+  }
+}
+
+/* Form validation styles */
+.was-validated .form-control:invalid,
+.form-control.is-invalid {
+  border-color: #dc3545;
+}
+
+.was-validated .form-control:valid,
+.form-control.is-valid {
+  border-color: #198754;
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const contactForm = document.getElementById('contactForm');
+  const submitBtn = document.getElementById('submitBtn');
+  
+  // Form validation
+  contactForm.addEventListener('submit', function(event) {
+    if (!contactForm.checkValidity()) {
+      event.preventDefault();
+      event.stopPropagation();
+    } else {
+      // Form is valid, show loading state
+      submitBtn.innerHTML = '<i class="bi bi-hourglass-split me-2"></i>Sending...';
+      submitBtn.disabled = true;
+    }
+    
+    contactForm.classList.add('was-validated');
+  });
+  
+  // Character count for message
+  const messageTextarea = document.getElementById('id_message');
+  if (messageTextarea) {
+    messageTextarea.addEventListener('input', function() {
+      const minLength = 20;
+      const currentLength = this.value.length;
+      
+      if (currentLength < minLength) {
+        this.classList.add('is-invalid');
+        this.classList.remove('is-valid');
+      } else {
+        this.classList.remove('is-invalid');
+        this.classList.add('is-valid');
+      }
+    });
+  }
+  
+  // Auto-resize textarea
+  if (messageTextarea) {
+    messageTextarea.addEventListener('input', function() {
+      this.style.height = 'auto';
+      this.style.height = (this.scrollHeight) + 'px';
+    });
+  }
+  
+  // Email click tracking
+  const emailLink = document.querySelector('a[href^="mailto:"]');
+  if (emailLink) {
+    emailLink.addEventListener('click', function() {
+      console.log('Email link clicked: revibe.threadss@gmail.com');
+    });
+  }
+});
+</script>
+{% endblock %}

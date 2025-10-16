@@ -1,0 +1,468 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ product.name }} - Schafter{% endblock %}
+
+{% block content %}
+<section class="product-detail padding-large">
+  <div class="container">
+    <!-- Main Product Section -->
+    <div class="row">
+      <!-- Product Image -->
+      <div class="col-lg-6 col-md-6 mb-4">
+        <div class="product-image position-relative">
+          <img src="{{ product.image.url }}" alt="{{ product.name }}" class="img-fluid rounded-3">
+          {% if not product.available %}
+          <div class="position-absolute top-0 start-0 m-3">
+            <span class="badge bg-danger fs-6">Out of Stock</span>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- Product Information -->
+      <div class="col-lg-6 col-md-6">
+        <div class="product-info">
+          <h1 class="product-title text-uppercase fw-bold mb-3">{{ product.name }}</h1>
+          <p class="product-price h2 text-primary mb-4">₹{{ product.price }}</p>
+
+          <!-- Product Description -->
+          <div class="product-description mb-4">
+            <p class="fs-5 text-muted">{{ product.description }}</p>
+          </div>
+
+          <!-- Product Meta Information -->
+          <div class="product-meta mb-4">
+            <div class="d-flex flex-wrap gap-4">
+              <p class="mb-2">
+                <strong class="text-dark">Category:</strong>
+                <a href="{% url 'product_list_by_category' product.category.slug %}"
+                  class="text-decoration-none text-primary">
+                  {{ product.category.name }}
+                </a>
+              </p>
+              <p class="mb-2">
+                <strong class="text-dark">Availability:</strong>
+                {% if product.available %}
+                <span class="text-success fw-bold">
+                  <i class="bi bi-check-circle-fill"></i> In Stock ({{ product.stock }} available)
+                </span>
+                {% else %}
+                <span class="text-danger fw-bold">
+                  <i class="bi bi-x-circle-fill"></i> Out of Stock
+                </span>
+                {% endif %}
+              </p>
+            </div>
+          </div>
+
+          <!-- Add to Cart Form -->
+          {% if product.available %}
+          <form action="{% url 'add_to_cart' product.id %}" method="post" class="mb-4">
+            {% csrf_token %}
+            <div class="row g-3 align-items-center">
+              <div class="col-12 col-sm-auto">
+                <label for="quantity" class="form-label fw-semibold">Quantity:</label>
+                <div class="d-flex align-items-center">
+                  <button type="button" class="btn btn-outline-secondary quantity-btn" data-action="decrease">-</button>
+                  <input type="number" id="quantity" name="quantity" value="1" min="1" max="{{ product.stock }}"
+                    class="form-control text-center mx-2" style="width: 80px;">
+                  <button type="button" class="btn btn-outline-secondary quantity-btn" data-action="increase">+</button>
+                </div>
+              </div>
+              <div class="col-12 col-sm-auto">
+                <button type="submit" class="btn btn-dark btn-lg mt-3 w-100">
+                  <i class="bi bi-cart-plus me-2"></i>Add to Cart
+                </button>
+              </div>
+            </div>
+          </form>
+          {% else %}
+          <div class="d-grid">
+            <button class="btn btn-secondary btn-lg py-3" disabled>
+              <i class="bi bi-slash-circle me-2"></i>Out of Stock
+            </button>
+          </div>
+          {% endif %}
+
+          <!-- Additional Features -->
+          <div class="product-features mt-4 pt-4 border-top">
+            <div class="row g-3">
+              <div class="col-6 col-sm-4 text-center">
+                <div class="feature-item">
+                  <i class="bi bi-truck fs-4 text-primary"></i>
+                  <p class="small mb-0 mt-1">Free Shipping</p>
+                </div>
+              </div>
+              <div class="col-6 col-sm-4 text-center">
+                <div class="feature-item">
+                  <i class="bi bi-arrow-left-right fs-4 text-primary"></i>
+                  <p class="small mb-0 mt-1">Easy Returns</p>
+                </div>
+              </div>
+              <div class="col-6 col-sm-4 text-center">
+                <div class="feature-item">
+                  <i class="bi bi-shield-check fs-4 text-primary"></i>
+                  <p class="small mb-0 mt-1">Quality Guarantee</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Related Products Section with Horizontal Scrolling -->
+    {% if related_products %}
+    <div class="row mt-5 pt-5 border-top">
+      <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+          <h3 class="text-uppercase fw-bold mb-0">Related Products</h3>
+          <div class="d-none d-md-block">
+            <a href="{% url 'product_list_by_category' product.category.slug %}"
+              class="btn btn-outline-dark btn-sm text-uppercase">
+              View All in {{ product.category.name }}
+            </a>
+          </div>
+        </div>
+
+        <!-- Mobile View All Button -->
+        <div class="d-md-none text-center mb-4">
+          <a href="{% url 'product_list_by_category' product.category.slug %}"
+            class="btn btn-outline-dark text-uppercase">
+            View All in {{ product.category.name }}
+          </a>
+        </div>
+
+        <!-- Horizontal Scrolling Container -->
+        <div class="related-products-scroller">
+          <div class="scroller-container">
+            <div class="scroller-wrapper">
+              {% for related_product in related_products %}
+              <div class="scroller-item">
+                <div class="product-card position-relative h-100 bg-white rounded-3 shadow-sm">
+                  <!-- Product Image - Entire card is clickable -->
+                  <div class="image-holder position-relative">
+                    <a href="{{ related_product.get_absolute_url }}" class="d-block image-link">
+                      <img src="{{ related_product.image.url }}" alt="{{ related_product.name }}"
+                        class="img-fluid product-image rounded-top">
+                      <!-- Quick View Button -->
+                      <div class="quick-view position-absolute top-0 end-0 p-2">
+                        <span class="btn btn-sm btn-light rounded-circle">
+                          <i class="bi bi-eye"></i>
+                        </span>
+                      </div>
+                    </a>
+                    {% if not related_product.available %}
+                    <div class="position-absolute top-0 start-0 m-2">
+                      <span class="badge bg-secondary">Out of Stock</span>
+                    </div>
+                    {% endif %}
+                  </div>
+
+                  <!-- Product Details -->
+                  <div class="card-detail p-3">
+                    <h5 class="card-title mb-2">
+                      <a href="{{ related_product.get_absolute_url }}"
+                        class="text-decoration-none text-dark product-name">
+                        {{ related_product.name }}
+                      </a>
+                    </h5>
+                    <div class="d-flex justify-content-between align-items-center">
+                      <span class="item-price text-primary fw-bold">₹{{ related_product.price }}</span>
+                      {% if related_product.available %}
+                      <span class="badge bg-success small">In Stock</span>
+                      {% endif %}
+                    </div>
+                  </div>
+                </div>
+              </div>
+              {% endfor %}
+            </div>
+          </div>
+
+          <!-- Navigation Arrows -->
+          <button class="scroller-nav scroller-prev" aria-label="Previous products">
+            <i class="bi bi-chevron-left"></i>
+          </button>
+          <button class="scroller-nav scroller-next" aria-label="Next products">
+            <i class="bi bi-chevron-right"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+    {% endif %}
+  </div>
+</section>
+
+<style>
+  /* Product Detail Specific Styles */
+  .quantity-btn {
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+  }
+
+  .feature-item {
+    padding: 10px;
+    border-radius: 8px;
+    transition: background-color 0.3s ease;
+  }
+
+  .feature-item:hover {
+    background-color: #f8f9fa;
+  }
+
+  /* Related Products Scroller Styles */
+  .related-products-scroller {
+    position: relative;
+    margin: 0 -15px;
+  }
+
+  .scroller-container {
+    overflow-x: auto;
+    scroll-behavior: smooth;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    padding: 10px 15px;
+  }
+
+  .scroller-container::-webkit-scrollbar {
+    display: none;
+  }
+
+  .scroller-wrapper {
+    display: flex;
+    gap: 20px;
+    padding-bottom: 10px;
+  }
+
+  .scroller-item {
+    flex: 0 0 280px;
+    min-width: 280px;
+  }
+
+  .product-card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border: 1px solid #e9ecef;
+    cursor: pointer;
+  }
+
+  .product-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15) !important;
+  }
+
+  .image-link {
+    position: relative;
+    display: block;
+    text-decoration: none;
+  }
+
+  .product-image {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+  }
+
+  .image-link:hover .product-image {
+    transform: scale(1.05);
+  }
+
+  .quick-view {
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  .product-card:hover .quick-view {
+    opacity: 1;
+  }
+
+  .product-name {
+    font-size: 0.9rem;
+    line-height: 1.3;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    min-height: 2.6em;
+  }
+
+  .scroller-nav {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 48px;
+    height: 48px;
+    border: none;
+    border-radius: 50%;
+    background: white;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 10;
+    transition: all 0.3s ease;
+    opacity: 0;
+  }
+
+  .related-products-scroller:hover .scroller-nav {
+    opacity: 1;
+  }
+
+  .scroller-nav:hover {
+    background: #f8f9fa;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  }
+
+  .scroller-prev {
+    left: 0;
+  }
+
+  .scroller-next {
+    right: 0;
+  }
+
+  /* Make entire product card clickable */
+  .product-card .image-link::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 1;
+  }
+
+  /* Mobile Responsive */
+  @media (max-width: 768px) {
+    .scroller-item {
+      flex: 0 0 250px;
+      min-width: 250px;
+    }
+
+    .product-image {
+      height: 180px;
+    }
+
+    .scroller-nav {
+      display: none;
+    }
+
+    .quick-view {
+      opacity: 1;
+    }
+
+    .product-card {
+      padding: 0;
+    }
+
+    .quantity-btn {
+      width: 45px;
+      height: 45px;
+    }
+  }
+
+  @media (max-width: 576px) {
+    .scroller-item {
+      flex: 0 0 220px;
+      min-width: 220px;
+    }
+
+    .product-image {
+      height: 160px;
+    }
+
+    .product-name {
+      font-size: 0.85rem;
+    }
+
+    .product-title {
+      font-size: 1.5rem;
+    }
+  }
+
+  /* Touch device improvements */
+  @media (hover: none) {
+    .scroller-nav {
+      display: none;
+    }
+
+    .quick-view {
+      opacity: 1;
+    }
+  }
+</style>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    // Quantity buttons functionality
+    const quantityInput = document.getElementById('quantity');
+    const quantityBtns = document.querySelectorAll('.quantity-btn');
+
+    quantityBtns.forEach(btn => {
+      btn.addEventListener('click', function () {
+        const action = this.getAttribute('data-action');
+        let currentValue = parseInt(quantityInput.value);
+        const max = parseInt(quantityInput.max);
+        const min = parseInt(quantityInput.min);
+
+        if (action === 'increase' && currentValue < max) {
+          quantityInput.value = currentValue + 1;
+        } else if (action === 'decrease' && currentValue > min) {
+          quantityInput.value = currentValue - 1;
+        }
+      });
+    });
+
+    // Related products scroller functionality
+    const scrollerContainer = document.querySelector('.scroller-container');
+    const prevButton = document.querySelector('.scroller-prev');
+    const nextButton = document.querySelector('.scroller-next');
+
+    if (scrollerContainer && prevButton && nextButton) {
+      const scrollAmount = 300;
+
+      nextButton.addEventListener('click', () => {
+        scrollerContainer.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+      });
+
+      prevButton.addEventListener('click', () => {
+        scrollerContainer.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
+      });
+
+      // Hide/show arrows based on scroll position
+      const updateArrows = () => {
+        const { scrollLeft, scrollWidth, clientWidth } = scrollerContainer;
+        prevButton.style.display = scrollLeft > 10 ? 'flex' : 'none';
+        nextButton.style.display = scrollLeft < scrollWidth - clientWidth - 10 ? 'flex' : 'none';
+      };
+
+      scrollerContainer.addEventListener('scroll', updateArrows);
+      updateArrows();
+    }
+
+    // Make entire product card clickable
+    const productCards = document.querySelectorAll('.product-card');
+    productCards.forEach(card => {
+      card.addEventListener('click', function (e) {
+        // Don't trigger if clicked on buttons or links
+        if (e.target.tagName === 'BUTTON' || e.target.tagName === 'A' || e.target.closest('button') || e.target.closest('a')) {
+          return;
+        }
+
+        const link = this.querySelector('a.image-link');
+        if (link) {
+          window.location.href = link.href;
+        }
+      });
+    });
+  });
+</script>
+
+{% endblock %}

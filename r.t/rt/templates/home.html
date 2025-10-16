@@ -1,0 +1,497 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Home - Schafter{% endblock %}
+
+{% block content %}
+<!-- Billboard Section -->
+<section id="billboard" class="position-relative overflow-hidden bg-light-blue">
+  <div class="container">
+    <div class="row d-flex align-items-center">
+      <div class="col-md-6">
+        <div class="banner-content mb-5">
+          <h1 class="display-2 text-uppercase text-dark pb-5">REDEFINE THE STREETS</h1>
+          <a href="{% url 'product_list' %}" class="btn btn-medium btn-dark text-uppercase btn-rounded-none">Shop
+            Product</a>
+        </div>
+      </div>
+      <div class="col-md-5">
+        <div class="image-holder">
+          <video autoplay muted loop playsinline class="img-fluid">
+            <source src="{% static 'videos/homebg.mp4' %}" type="video/mp4">
+          </video>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Featured Products Section -->
+<section id="mobile-products" class="product-store position-relative padding-large no-padding-top">
+  <div class="container">
+    <div class="row">
+      <div class="display-header d-flex justify-content-between pb-3">
+        <h2 class="display-7 text-dark text-uppercase">Featured Products</h2>
+        <div class="btn-right">
+          <a href="{% url 'product_list' %}" class="btn btn-medium btn-normal text-uppercase">Shop More</a>
+        </div>
+      </div>
+      <div class="swiper product-swiper">
+        <div class="swiper-wrapper">
+          {% for product in featured_products %}
+          <div class="swiper-slide">
+            <div class="product-card position-relative">
+              <div class="image-holder">
+                <a href="{% url 'single_product_view' slug=product.slug %}"><img src="{{ product.image.url }}"
+                    alt="{{ product.name }}" class="img-fluid" style="height: 250px; object-fit: cover;"></a>
+              </div>
+              <div class="card-detail d-flex justify-content-between align-items-baseline pt-3">
+                <h3 class="card-title text-uppercase">
+                  <a href="{{ product.get_absolute_url }}" class="text-decoration-none text-dark">{{ product.name }}</a>
+                </h3>
+                <span class="item-price text-primary">${{ product.price }}</span>
+              </div>
+            </div>
+          </div>
+          {% empty %}
+          <div class="swiper-slide">
+            <div class="text-center py-5">
+              <p class="text-muted">No featured products available.</p>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="swiper-pagination position-absolute text-center"></div>
+</section>
+
+<!-- Categories Section -->
+<section id="smart-watches" class="product-store padding-large position-relative">
+  <div class="container">
+    <div class="row">
+      <div class="display-header d-flex justify-content-between pb-3">
+        <h2 class="display-7 text-dark text-uppercase">Shop by Category</h2>
+        <div class="btn-right">
+          <a href="{% url 'product_list' %}" class="btn btn-medium btn-normal text-uppercase">View All</a>
+        </div>
+      </div>
+      <div class="swiper product-watch-swiper">
+        <div class="swiper-wrapper">
+          {% for category in categories %}
+          <div class="swiper-slide">
+            <div class="product-card position-relative">
+              <div class="image-holder bg-light d-flex align-items-center justify-content-center"
+                style="height: 200px;">
+                <div class="text-center">
+                  <i class="fas fa-folder fa-3x text-primary mb-3"></i>
+                  <h5 class="text-uppercase">{{ category.name }}</h5>
+                </div>
+              </div>
+              <div class="card-detail text-center pt-3">
+                <h4 class="card-title text-uppercase">
+                  <a href="{% url 'product_list_by_category' category.slug %}" class="text-decoration-none text-dark">
+                    {{ category.name }}
+                  </a>
+                </h4>
+                <span class="item-count text-muted">{{ category.products.count }} products</span>
+                <div class="mt-2">
+                  <a href="{% url 'product_list_by_category' category.slug %}" class="btn btn-outline-primary btn-sm">
+                    Browse Category
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+          {% empty %}
+          <div class="swiper-slide">
+            <div class="text-center py-5">
+              <p class="text-muted">No categories available.</p>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="swiper-pagination position-absolute text-center"></div>
+</section>
+<!-- New Arrivals Section -->
+<section id="new-arrivals" class="product-store padding-large position-relative bg-light">
+  <div class="container">
+    <div class="row">
+      <div class="display-header d-flex justify-content-between pb-3 align-items-center">
+        <h2 class="display-7 text-dark text-uppercase mb-0">New Arrivals</h2>
+        <div class="btn-right d-none d-md-block">
+          <a href="{% url 'product_list' %}?sort=newest" class="btn btn-medium btn-normal text-uppercase">View All</a>
+        </div>
+      </div>
+
+      <!-- Mobile View All Button -->
+      <div class="col-12 d-md-none text-center mb-3">
+        <a href="{% url 'product_list' %}?sort=newest" class="btn btn-medium btn-normal text-uppercase">View All New
+          Arrivals</a>
+      </div>
+    </div>
+
+    <!-- Horizontal Scrolling Container -->
+    <div class="new-arrivals-scroller">
+      <div class="scroller-container">
+        <div class="scroller-wrapper">
+          {% for product in new_arrivals %}
+          <div class="scroller-item">
+            <div class="product-card position-relative h-100">
+              <!-- Product Image -->
+              <div class="image-holder">
+                <a href="{{ product.get_absolute_url }}" class="d-block">
+                  <img src="{{ product.image.url }}" alt="{{ product.name }}" class="img-fluid product-image">
+                </a>
+                <!-- Quick Add to Cart -->
+
+              </div>
+
+              <!-- Product Details -->
+              <div class="card-detail pt-3">
+                <h4 class="card-title text-uppercase mb-1">
+                  <a href="{{ product.get_absolute_url }}" class="text-decoration-none text-dark product-name">{{
+                    product.name }}</a>
+                </h4>
+                <span class="item-price text-primary fw-bold">${{ product.price }}</span>
+                {% if not product.available %}
+                <span class="badge bg-secondary ms-2">Out of Stock</span>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+          {% empty %}
+          <div class="col-12 text-center py-5">
+            <p class="text-muted">No new arrivals available.</p>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+
+      <!-- Navigation Arrows -->
+      <button class="scroller-nav scroller-prev" aria-label="Previous products">
+        <svg width="24" height="24" fill="currentColor">
+          <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z" />
+        </svg>
+      </button>
+      <button class="scroller-nav scroller-next" aria-label="Next products">
+        <svg width="24" height="24" fill="currentColor">
+          <path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z" />
+        </svg>
+      </button>
+    </div>
+  </div>
+</section>
+
+<style>
+  .new-arrivals-scroller {
+    position: relative;
+    margin: 0 -15px;
+  }
+
+  .scroller-container {
+    overflow-x: auto;
+    scroll-behavior: smooth;
+    scrollbar-width: none;
+    /* Firefox */
+    -ms-overflow-style: none;
+    /* IE and Edge */
+    padding: 10px 15px;
+  }
+
+  .scroller-container::-webkit-scrollbar {
+    display: none;
+    /* Chrome, Safari and Opera */
+  }
+
+  .scroller-wrapper {
+    display: flex;
+    gap: 15px;
+    padding-bottom: 10px;
+  }
+
+  .scroller-item {
+    flex: 0 0 280px;
+    min-width: 280px;
+  }
+
+  .product-card {
+    background: white;
+    border-radius: 12px;
+    padding: 15px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .product-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+  }
+
+  .product-image {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    border-radius: 8px;
+  }
+
+  .quick-actions {
+    top: 10px;
+    right: 10px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  .product-card:hover .quick-actions {
+    opacity: 1;
+  }
+
+  .quick-add-btn {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+  }
+
+  .card-detail {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .product-name {
+    font-size: 0.9rem;
+    line-height: 1.3;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    min-height: 2.6em;
+  }
+
+  .scroller-nav {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 48px;
+    height: 48px;
+    border: none;
+    border-radius: 50%;
+    background: white;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 10;
+    transition: all 0.3s ease;
+    opacity: 0;
+  }
+
+  .new-arrivals-scroller:hover .scroller-nav {
+    opacity: 1;
+  }
+
+  .scroller-nav:hover {
+    background: #f8f9fa;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  }
+
+  .scroller-prev {
+    left: 10px;
+  }
+
+  .scroller-next {
+    right: 10px;
+  }
+
+  /* Mobile Responsive */
+  @media (max-width: 768px) {
+    .scroller-item {
+      flex: 0 0 250px;
+      min-width: 250px;
+    }
+
+    .product-image {
+      height: 180px;
+    }
+
+    .scroller-nav {
+      display: none;
+      /* Hide arrows on mobile */
+    }
+
+    .quick-actions {
+      opacity: 1;
+      /* Always show on mobile */
+    }
+
+    .product-card {
+      padding: 12px;
+    }
+  }
+
+  @media (max-width: 576px) {
+    .scroller-item {
+      flex: 0 0 220px;
+      min-width: 220px;
+    }
+
+    .product-image {
+      height: 160px;
+    }
+
+    .product-name {
+      font-size: 0.85rem;
+    }
+  }
+
+  /* Touch device improvements */
+  @media (hover: none) {
+    .scroller-nav {
+      display: none;
+    }
+
+    .quick-actions {
+      opacity: 1;
+    }
+
+    .product-card:hover {
+      transform: none;
+    }
+  }
+</style>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const scrollerContainer = document.querySelector('.scroller-container');
+    const scrollerWrapper = document.querySelector('.scroller-wrapper');
+    const prevButton = document.querySelector('.scroller-prev');
+    const nextButton = document.querySelector('.scroller-next');
+
+    if (scrollerContainer && prevButton && nextButton) {
+      const scrollAmount = 300;
+
+      nextButton.addEventListener('click', () => {
+        scrollerContainer.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+      });
+
+      prevButton.addEventListener('click', () => {
+        scrollerContainer.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
+      });
+
+      // Hide/show arrows based on scroll position
+      scrollerContainer.addEventListener('scroll', () => {
+        const { scrollLeft, scrollWidth, clientWidth } = scrollerContainer;
+
+        prevButton.style.opacity = scrollLeft > 0 ? '1' : '0.5';
+        nextButton.style.opacity = scrollLeft < scrollWidth - clientWidth - 10 ? '1' : '0.5';
+      });
+    }
+
+    // Add touch scrolling improvements
+    let startX;
+    let scrollLeft;
+
+    if (scrollerContainer) {
+      scrollerContainer.addEventListener('touchstart', (e) => {
+        startX = e.touches[0].pageX - scrollerContainer.offsetLeft;
+        scrollLeft = scrollerContainer.scrollLeft;
+      });
+
+      scrollerContainer.addEventListener('touchmove', (e) => {
+        if (!startX) return;
+        const x = e.touches[0].pageX - scrollerContainer.offsetLeft;
+        const walk = (x - startX) * 2;
+        scrollerContainer.scrollLeft = scrollLeft - walk;
+      });
+    }
+  });
+</script>
+
+<!-- Instagram Section -->
+<section id="instagram" class="padding-large overflow-hidden no-padding-top">
+  <div class="container">
+    <div class="row">
+      <div class="display-header text-uppercase text-dark text-center pb-3">
+        <h2 class="display-7">Follow Us on Instagram</h2>
+        <p class="text-muted">@revibe.threadsss</p>
+      </div>
+      <div class="d-flex flex-wrap justify-content-center">
+        <figure class="instagram-item pe-2 mb-3">
+          <a href="#" class="image-link position-relative">
+            <img src="{% static 'images/insta-item1.jpg' %}" alt="instagram" class="insta-image img-fluid"
+              style="width: 366.4px; height: 200px; object-fit: cover;">
+            <div class="icon-overlay position-absolute d-flex justify-content-center">
+              <svg class="instagram text-white" width="24" height="24">
+                <use xlink:href="#"></use>
+              </svg>
+            </div>
+          </a>
+        </figure>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+  // Initialize Swiper for featured products
+  var productSwiper = new Swiper('.product-swiper', {
+    slidesPerView: 1,
+    spaceBetween: 10,
+    pagination: {
+      el: '.swiper-pagination',
+      clickable: true,
+    },
+    breakpoints: {
+      640: {
+        slidesPerView: 2,
+        spaceBetween: 20,
+      },
+      768: {
+        slidesPerView: 3,
+        spaceBetween: 30,
+      },
+      1024: {
+        slidesPerView: 4,
+        spaceBetween: 40,
+      },
+    }
+  });
+
+  // Initialize Swiper for categories
+  var categorySwiper = new Swiper('.product-watch-swiper', {
+    slidesPerView: 1,
+    spaceBetween: 10,
+    pagination: {
+      el: '.swiper-pagination',
+      clickable: true,
+    },
+    breakpoints: {
+      640: {
+        slidesPerView: 2,
+        spaceBetween: 20,
+      },
+      768: {
+        slidesPerView: 3,
+        spaceBetween: 30,
+      },
+      1024: {
+        slidesPerView: 4,
+        spaceBetween: 40,
+      },
+    }
+  });
+</script>
+{% endblock %}

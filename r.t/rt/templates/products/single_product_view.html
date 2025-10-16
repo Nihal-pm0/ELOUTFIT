@@ -1,0 +1,316 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ product.name }} - View Product{% endblock %}
+
+{% block content %}
+<!-- Full-width Product Viewer -->
+<div class="product-viewer-container">
+    <div class="container-fluid px-0">
+        <div class="row g-0">
+
+            <!-- Main Product Image -->
+            <div class="col-lg-5">
+                <div class="main-product-image">
+                    {% if product.image %}
+                        <img src="{{ product.image.url }}" alt="{{ product.name }}" class="img-fluid" id="zoomImage">
+                    {% else %}
+                        <img src="{% static 'images/placeholder.jpg' %}" alt="No image" class="img-fluid">
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Product Info Panel -->
+            <div class="col-lg-5">
+                <div class="product-info-panel p-4">
+                    <!-- Breadcrumb -->
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
+                            <li class="breadcrumb-item">{{ product.category.name }}</li>
+                            <li class="breadcrumb-item active">{{ product.name|truncatewords:3 }}</li>
+                        </ol>
+                    </nav>
+
+                    <!-- Product Title -->
+                    <h1 class="product-title display-6">{{ product.name }}</h1>
+                    
+                    <!-- Rating -->
+                    <div class="rating mb-3">
+                        <span class="text-warning">★★★★☆</span>
+                        <span class="text-muted ms-2">(4.2/5.0)</span>
+                    </div>
+
+                    <!-- Price -->
+                    <div class="price-section mb-4">
+                        <span class="h2 text-primary">${{ product.price }}</span>
+                        {% if product.old_price %}
+                            <span class="text-muted text-decoration-line-through ms-2 h4">${{ product.old_price }}</span>
+                            <span class="badge bg-danger ms-2">Save {{ product.discount_percentage }}%</span>
+                        {% endif %}
+                    </div>
+
+                    <!-- Quick Description -->
+                    <div class="quick-description mb-4">
+                        <p class="text-muted">{{ product.description|truncatewords:30 }}</p>
+                    </div>
+
+                    <!-- Add to Cart Section -->
+                    <div class="add-to-cart-section border-top pt-4">
+                        <form method="post" class="add-to-cart-form">
+                            {% csrf_token %}
+                            
+
+                            <!-- Action Buttons -->
+                            <div class="action-buttons">
+                                <a href="{% url 'cart:add_to_cart' product.id %}" type="submit" class="btn btn-primary btn-lg w-100 mb-3">
+                                    <i class="fas fa-shopping-cart"></i> Add to Cart - ${{ product.price }}
+                                </a>
+                                
+                                <div class="d-grid gap-2">
+                                    <button type="button" class="btn btn-outline-secondary">
+                                        <i class="fas fa-share-alt"></i> Share Product
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- Quick Features -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Product Details Section -->
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-12">
+            <!-- Detailed Tabs -->
+            <div class="product-details-tabs">
+                <ul class="nav nav-tabs" id="productTabs" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="details-tab" data-bs-toggle="tab" data-bs-target="#details" type="button" role="tab">
+                            Product Details
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="specs-tab" data-bs-toggle="tab" data-bs-target="#specs" type="button" role="tab">
+                            Specifications
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="reviews-tab" data-bs-toggle="tab" data-bs-target="#reviews" type="button" role="tab">
+                            Customer Reviews
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="shipping-tab" data-bs-toggle="tab" data-bs-target="#shipping" type="button" role="tab">
+                            Shipping & Returns
+                        </button>
+                    </li>
+                </ul>
+                
+                <div class="tab-content p-4 border border-top-0" id="productTabsContent">
+                    <!-- Details Tab -->
+                    <div class="tab-pane fade show active" id="details" role="tabpanel">
+                        <h4>About This Product</h4>
+                        <p>{{ product.description|linebreaks }}</p>
+                        
+                        {% if product.features %}
+                        <h5 class="mt-4">Key Features:</h5>
+                        <ul>
+                            {% for feature in product.features_list %}
+                                <li>{{ feature }}</li>
+                            {% endfor %}
+                        </ul>
+                        {% endif %}
+                    </div>
+                    
+                    <!-- Specifications Tab -->
+                    <div class="tab-pane fade" id="specs" role="tabpanel">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <table class="table table-striped">
+                                    <tbody>
+                                        <tr><td><strong>Brand</strong></td><td>{{ product.brand|default:"Generic" }}</td></tr>
+                                        <tr><td><strong>Model</strong></td><td>{{ product.model|default:"N/A" }}</td></tr>
+                                        <tr><td><strong>SKU</strong></td><td>{{ product.sku|default:"N/A" }}</td></tr>
+                                        <tr><td><strong>Weight</strong></td><td>{{ product.weight|default:"N/A" }}</td></tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="col-md-6">
+                                <table class="table table-striped">
+                                    <tbody>
+                                        <tr><td><strong>Material</strong></td><td>{{ product.material|default:"N/A" }}</td></tr>
+                                        <tr><td><strong>Color</strong></td><td>{{ product.color|default:"N/A" }}</td></tr>
+                                        <tr><td><strong>Dimensions</strong></td><td>{{ product.dimensions|default:"N/A" }}</td></tr>
+                                        <tr><td><strong>Warranty</strong></td><td>{{ product.warranty|default:"1 Year" }}</td></tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Reviews Tab -->
+                    <div class="tab-pane fade" id="reviews" role="tabpanel">
+                        <div class="text-center py-5">
+                            <i class="fas fa-comments fa-3x text-muted mb-3"></i>
+                            <h4>No Reviews Yet</h4>
+                            <p class="text-muted">Be the first to review this product!</p>
+                            <button class="btn btn-primary">Write a Review</button>
+                        </div>
+                    </div>
+                    
+                    <!-- Shipping Tab -->
+                    <div class="tab-pane fade" id="shipping" role="tabpanel">
+                        <h4>Shipping Information</h4>
+                        <ul>
+                            <li>Free standard shipping on orders over $50</li>
+                            <li>Express shipping available for $9.99</li>
+                            <li>International shipping available</li>
+                            <li>Estimated delivery: 3-5 business days</li>
+                        </ul>
+                        
+                        <h4 class="mt-4">Return Policy</h4>
+                        <ul>
+                            <li>30-day money-back guarantee</li>
+                            <li>Free returns within 30 days</li>
+                            <li>Product must be in original condition</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Related Products -->
+{% if related_products %}
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-12">
+            <h3 class="mb-4">You May Also Like</h3>
+            <div class="row">
+                {% for related_product in related_products %}
+                <div class="col-xl-3 col-lg-4 col-md-6 mb-4">
+                    <div class="card product-card h-100">
+                        {% if related_product.image %}
+                            <img src="{{ related_product.image.url }}" class="card-img-top" alt="{{ related_product.name }}">
+                        {% else %}
+                            <img src="{% static 'images/placeholder.jpg' %}" class="card-img-top" alt="No image">
+                        {% endif %}
+                        <div class="card-body">
+                            <h6 class="card-title">{{ related_product.name }}</h6>
+                            <p class="card-text text-primary fw-bold">${{ related_product.price }}</p>
+                        </div>
+                        <div class="card-footer bg-transparent">
+                            <a href="{% url 'single_product_view' slug=related_product.slug %}" class="btn btn-outline-primary btn-sm w-100">View Product</a>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.product-viewer-container {
+    background: #f8f9fa;
+    min-height: 80vh;
+}
+
+.product-gallery-sidebar {
+    padding: 20px;
+    background: white;
+    height: 100%;
+    border-right: 1px solid #dee2e6;
+}
+
+.gallery-thumb {
+    margin-bottom: 10px;
+    cursor: pointer;
+    border: 2px solid transparent;
+    padding: 5px;
+}
+
+.gallery-thumb.active {
+    border-color: #007bff;
+}
+
+.gallery-thumb img {
+    border-radius: 5px;
+}
+
+.main-product-image {
+    padding: 40px;
+    background: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+}
+
+.main-product-image img {
+    max-height: 600px;
+    width: auto;
+}
+
+.product-info-panel {
+    background: white;
+    height: 100%;
+    border-left: 1px solid #dee2e6;
+}
+
+.quantity-input {
+    max-width: 80px;
+}
+
+.product-card {
+    transition: transform 0.2s;
+}
+
+.product-card:hover {
+    transform: translateY(-5px);
+}
+
+.product-card img {
+    height: 200px;
+    object-fit: cover;
+}
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Quantity buttons
+document.addEventListener('DOMContentLoaded', function() {
+    const quantityInput = document.querySelector('.quantity-input');
+    const quantityBtns = document.querySelectorAll('.quantity-btn');
+    
+    quantityBtns.forEach(btn => {
+        btn.addEventListener('click', function() {
+            let currentValue = parseInt(quantityInput.value);
+            
+            if (this.dataset.action === 'increase') {
+                quantityInput.value = currentValue + 1;
+            } else if (this.dataset.action === 'decrease' && currentValue > 1) {
+                quantityInput.value = currentValue - 1;
+            }
+        });
+    });
+    
+    // Input validation
+    quantityInput.addEventListener('change', function() {
+        if (this.value < 1) this.value = 1;
+        if (this.value > 10) this.value = 10;
+    });
+});
+</script>
+{% endblock %}

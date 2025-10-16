@@ -1,0 +1,10 @@
+# .gitignore
+.env
+*.env
+.env.*
+!.env.example
+config/aws.json
+*.key
+*.pem
+credentials/
+.aws/

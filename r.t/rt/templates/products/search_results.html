@@ -1,0 +1,94 @@
+{% extends 'base.html' %}
+
+{% block title %}Search - Schafter{% endblock %}
+
+{% block content %}
+<div class="container padding-large">
+    <div class="row">
+        <div class="col-12">
+            <!-- Search Header -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h1 class="text-uppercase mb-0">
+                    {% if query %}Search: "{{ query }}"{% else %}All Products{% endif %}
+                </h1>
+                <span class="text-muted">{{ results_count }} product{{ results_count|pluralize }}</span>
+            </div>
+
+            <!-- Search Box (keep it visible) -->
+            <div class="card mb-4">
+                <div class="card-body py-3">
+                    <form action="{% url 'search' %}" method="get" class="row g-2 align-items-center">
+                        <div class="col">
+                            <input type="text" name="q" class="form-control" 
+                                   value="{{ query }}" placeholder="Type 's' for shirts, 't' for tshirts..." 
+                                   required>
+                        </div>
+                        <div class="col-auto">
+                            <button type="submit" class="btn btn-dark">Search</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Quick Search Suggestions -->
+            {% if not query or query|length == 1 %}
+            <div class="row mb-4">
+                <div class="col-12">
+                    <p class="text-muted mb-2">Quick search:</p>
+                    <div class="d-flex flex-wrap gap-2">
+                        <a href="{% url 'search' %}?q=s" class="btn btn-outline-dark btn-sm">S - Shirts</a>
+                        <a href="{% url 'search' %}?q=t" class="btn btn-outline-dark btn-sm">T - Tshirts</a>
+                        <a href="{% url 'search' %}?q=h" class="btn btn-outline-dark btn-sm">H - Hoodies</a>
+                        <a href="{% url 'search' %}?q=p" class="btn btn-outline-dark btn-sm">P - Pants</a>
+                        <a href="{% url 'search' %}?q=j" class="btn btn-outline-dark btn-sm">J - Jackets</a>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Results Grid -->
+            {% if products %}
+            <div class="row">
+                {% for product in products %}
+                <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
+                    <div class="product-card position-relative">
+                        <div class="image-holder">
+                            <a href="{{ product.get_absolute_url }}">
+                                <img src="{{ product.image.url }}" alt="{{ product.name }}" 
+                                     class="img-fluid" style="height: 200px; object-fit: cover;">
+                            </a>
+                        </div>
+                        <div class="card-detail pt-3">
+                            <h5 class="card-title text-uppercase mb-1">
+                                <a href="{{ product.get_absolute_url }}" class="text-decoration-none text-dark">
+                                    {{ product.name }}
+                                </a>
+                            </h5>
+                            <span class="item-price text-primary fw-bold">₹{{ product.price }}</span>
+                            {% if product.available %}
+                            <span class="badge bg-success ms-2 small">In Stock</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            
+            <!-- No Results Message -->
+            {% elif query %}
+            <div class="text-center py-5">
+                <div class="mb-4">
+                    <i class="bi bi-search display-4 text-muted"></i>
+                </div>
+                <h4 class="mb-3">No products found for "{{ query }}"</h4>
+                <p class="text-muted mb-4">Try searching with different keywords or browse all products.</p>
+                <div class="d-flex gap-2 justify-content-center">
+                    <a href="{% url 'search' %}" class="btn btn-dark">Search Again</a>
+                    <a href="{% url 'product_list' %}" class="btn btn-outline-dark">Browse All</a>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,13 @@
+{ 
+ 
+    "files.exclude": { 
+ 
+        "**/.env": true, 
+ 
+        "**/.env.local": true, 
+ 
+        "**/.env.production": true 
+ 
+    } 
+ 
+} 

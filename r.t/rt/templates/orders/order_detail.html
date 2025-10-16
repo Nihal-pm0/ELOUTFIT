@@ -1,0 +1,111 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Order #{{ order.order_number }} - Schafter{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2>Order #{{ order.order_number }}</h2>
+                <a href="{% url 'order_history' %}" class="btn btn-outline-secondary">
+                    <i class="fas fa-arrow-left"></i> Back to Orders
+                </a>
+            </div>
+            
+            <div class="row">
+                <!-- Order Items -->
+                <div class="col-lg-8 mb-4">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="card-title mb-0">Order Items</h5>
+                        </div>
+                        <div class="card-body">
+                            {% for item in order.items.all %}
+                            <div class="row align-items-center mb-3 pb-3 border-bottom">
+                                <div class="col-2">
+                                    <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}" 
+                                         class="img-fluid rounded" style="max-height: 80px; object-fit: cover;">
+                                </div>
+                                <div class="col-6">
+                                    <h6 class="mb-1">{{ item.product.name }}</h6>
+                                    <p class="text-muted mb-0">{{ item.product.category.name }}</p>
+                                </div>
+                                <div class="col-2 text-center">
+                                    <span class="text-muted">Qty: {{ item.quantity }}</span>
+                                </div>
+                                <div class="col-2 text-end">
+                                    <strong>${{ item.total_price }}</strong>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Order Summary -->
+                <div class="col-lg-4">
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h5 class="card-title mb-0">Order Summary</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>Order Number:</span>
+                                <strong>{{ order.order_number }}</strong>
+                            </div>
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>Order Date:</span>
+                                <span>{{ order.created_at|date:"M d, Y" }}</span>
+                            </div>
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>Status:</span>
+                                <span class="badge 
+                                    {% if order.status == 'completed' %}bg-success
+                                    {% elif order.status == 'cancelled' %}bg-danger
+                                    {% else %}bg-warning{% endif %}">
+                                    {{ order.status|title }}
+                                </span>
+                            </div>
+                            <hr>
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>Subtotal:</span>
+                                <span>₹{{ order.total_amount }}</span>
+                            </div>
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>Shipping:</span>
+                                <span>₹ 0.00</span>
+                            </div>
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>Tax:</span>
+                                <span>₹0.00</span>
+                            </div>
+                            <hr>
+                            <div class="d-flex justify-content-between">
+                                <strong>Total:</strong>
+                                <strong>₹{{ order.total_amount }}</strong>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Shipping Information -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="card-title mb-0">Shipping Information</h5>
+                        </div>
+                        <div class="card-body">
+                            <h6>{{ order.full_name }}</h6>
+                            <p class="mb-1">{{ order.email }}</p>
+                            {% if order.phone %}
+                            <p class="mb-1">{{ order.phone }}</p>
+                            {% endif %}
+                            <p class="mb-0">{{ order.address|linebreaks }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

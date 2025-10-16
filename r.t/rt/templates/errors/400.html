@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Bad Request - 400 Error{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6 text-center">
+            <div class="error-container">
+                <div class="error-icon mb-4">
+                    <i class="fas fa-exclamation-circle fa-5x text-warning"></i>
+                </div>
+                
+                <h1 class="display-1 fw-bold text-muted">400</h1>
+                <h2 class="mb-4">Bad Request</h2>
+                <p class="lead text-muted mb-4">
+                    Your browser sent a request that we couldn't understand.
+                    Please check the URL and try again.
+                </p>
+                
+                <div class="d-grid gap-2 d-md-block">
+                    <a href="{% url 'home' %}" class="btn btn-primary btn-lg me-md-2">Go Home</a>
+                    <button onclick="history.back()" class="btn btn-outline-secondary btn-lg">Go Back</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

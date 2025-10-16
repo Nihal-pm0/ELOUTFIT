@@ -1,0 +1,97 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Payment Options - Schafter{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-8">
+            <h2 class="mb-4">Choose Payment Method</h2>
+            
+            <!-- Order Summary -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Order Summary</h5>
+                </div>
+                <div class="card-body">
+                    <p><strong>Customer:</strong> {{ customer_data.full_name }}</p>
+                    <p><strong>Email:</strong> {{ customer_data.email }}</p>
+                    <p><strong>Shipping to:</strong> {{ customer_data.address }}</p>
+                    <hr>
+                    <p><strong>Total Amount:</strong> ₹{{ total_amount }}</p>
+                </div>
+            </div>
+
+            <!-- Payment Options -->
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Select Payment Method</h5>
+                </div>
+                <div class="card-body">
+                    <!-- Razorpay Option -->
+                    <div class="payment-option mb-3">
+                        <form method="post" action="{% url 'create_razorpay_order' %}">
+                            {% csrf_token %}
+                            <input type="hidden" name="full_name" value="{{ customer_data.full_name }}">
+                            <input type="hidden" name="email" value="{{ customer_data.email }}">
+                            <input type="hidden" name="phone" value="{{ customer_data.phone }}">
+                            <input type="hidden" name="address" value="{{ customer_data.address }}">
+                            <input type="hidden" name="total_amount" value="{{ total_amount }}">
+                            
+                            <button type="submit" class="btn btn-primary btn-lg w-100 py-3">
+                                <i class="fas fa-credit-card me-2"></i>
+                                Online Payment
+                                <br>
+                                <small class="fw-normal">Credit Card, Debit Card, UPI, Net Banking</small>
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- Cash on Delivery Option -->
+                    <div class="payment-option">
+                        <form method="post" action="{% url 'create_cod_order' %}">
+                            {% csrf_token %}
+                            <input type="hidden" name="full_name" value="{{ customer_data.full_name }}">
+                            <input type="hidden" name="email" value="{{ customer_data.email }}">
+                            <input type="hidden" name="phone" value="{{ customer_data.phone }}">
+                            <input type="hidden" name="address" value="{{ customer_data.address }}">
+                            <input type="hidden" name="total_amount" value="{{ total_amount }}">
+                            
+                            <button type="submit" class="btn btn-outline-secondary btn-lg w-100 py-3">
+                                <i class="fas fa-money-bill-wave me-2"></i>
+                                Cash on Delivery
+                                <br>
+                                <small class="fw-normal">Pay when you receive your order</small>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Order Total</h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>Subtotal:</span>
+                        <span>₹{{ total_amount }}</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>Shipping:</span>
+                        <span>₹0</span>
+                    </div>
+                    <hr>
+                    <div class="d-flex justify-content-between fw-bold fs-5">
+                        <span>Total:</span>
+                        <span>₹{{ total_amount }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
