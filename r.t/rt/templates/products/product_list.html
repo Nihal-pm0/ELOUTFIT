@@ -2,7 +2,7 @@
 {% load static %}
 
 {% block title %}
-{% if category %}{{ category.name }}{% else %}All Products{% endif %} - Schafter
+{% if category %}{{ category.name }}{% else %}All Products{% endif %} - Eloutfit
 {% endblock %}
 
 {% block content %}
@@ -38,23 +38,26 @@
           <select class="form-select" onchange="location = this.value;">
             <option value="{% url 'product_list' %}">All Categories</option>
             {% for cat in categories %}
-            <option value="{% url 'product_list_by_category' cat.slug %}" {% if category and category.slug == cat.slug %}selected{% endif %}>
+            <option value="{% url 'product_list_by_category' cat.slug %}" {% if category and category.slug==cat.slug
+              %}selected{% endif %}>
               {{ cat.name }}
             </option>
             {% endfor %}
           </select>
         </div>
 
-        <div class="display-header d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center pb-3">
+        <div
+          class="display-header d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center pb-3">
           <h2 class="display-7 text-dark text-uppercase mb-3 mb-md-0">
             {% if category %}{{ category.name }}{% else %}All Products{% endif %}
             <span class="text-muted fs-6 d-block d-md-inline ms-md-2">({{ products.paginator.count }} products)</span>
           </h2>
           <div class="sorting">
             <select class="form-select" onchange="location = this.value;">
-              <option value="?sort=newest" {% if sort == 'newest' %}selected{% endif %}>Newest First</option>
-              <option value="?sort=price_low" {% if sort == 'price_low' %}selected{% endif %}>Price: Low to High</option>
-              <option value="?sort=price_high" {% if sort == 'price_high' %}selected{% endif %}>Price: High to Low</option>
+              <option value="?sort=newest" {% if sort=='newest' %}selected{% endif %}>Newest First</option>
+              <option value="?sort=price_low" {% if sort=='price_low' %}selected{% endif %}>Price: Low to High</option>
+              <option value="?sort=price_high" {% if sort=='price_high' %}selected{% endif %}>Price: High to Low
+              </option>
             </select>
           </div>
         </div>
@@ -85,7 +88,8 @@
                 <div class="d-flex justify-content-between align-items-center">
                   <span class="item-price text-primary fw-bold">₹{{ product.price }}</span>
                   {% if product.available %}
-                  <a href="{% url 'cart:add_to_cart' product.id %}" class="btn btn-dark btn-sm add-to-cart-btn" style="min-width: 100px;">
+                  <a href="{% url 'cart:add_to_cart' product.id %}"
+                    class="btn btn-dark btn-sm add-to-cart-btn text-nowrap w-25">
                     Add to Cart
                   </a>
                   {% else %}
@@ -113,31 +117,32 @@
           <ul class="pagination justify-content-center flex-wrap">
             {% if page_obj.has_previous %}
             <li class="page-item">
-              <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if sort %}&sort={{ sort }}{% endif %}">
+              <a class="page-link"
+                href="?page={{ page_obj.previous_page_number }}{% if sort %}&sort={{ sort }}{% endif %}">
                 <i class="bi bi-chevron-left"></i> Previous
               </a>
             </li>
             {% endif %}
 
             {% for num in page_obj.paginator.page_range %}
-              {% if page_obj.number == num %}
-              <li class="page-item active">
-                <span class="page-link">{{ num }}</span>
-              </li>
-              {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
-              <li class="page-item">
-                <a class="page-link" href="?page={{ num }}{% if sort %}&sort={{ sort }}{% endif %}">{{ num }}</a>
+            {% if page_obj.number == num %}
+            <li class="page-item active">
+              <span class="page-link">{{ num }}</span>
+            </li>
+            {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %} <li class="page-item">
+              <a class="page-link" href="?page={{ num }}{% if sort %}&sort={{ sort }}{% endif %}">{{ num }}</a>
               </li>
               {% endif %}
-            {% endfor %}
+              {% endfor %}
 
-            {% if page_obj.has_next %}
-            <li class="page-item">
-              <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if sort %}&sort={{ sort }}{% endif %}">
-                Next <i class="bi bi-chevron-right"></i>
-              </a>
-            </li>
-            {% endif %}
+              {% if page_obj.has_next %}
+              <li class="page-item">
+                <a class="page-link"
+                  href="?page={{ page_obj.next_page_number }}{% if sort %}&sort={{ sort }}{% endif %}">
+                  Next <i class="bi bi-chevron-right"></i>
+                </a>
+              </li>
+              {% endif %}
           </ul>
         </nav>
         {% endif %}
@@ -207,24 +212,24 @@
     .product-store {
       padding: 1rem 0;
     }
-    
+
     .product-card {
       padding: 12px;
       margin-bottom: 1rem;
     }
-    
+
     .product-image {
       height: 200px;
     }
-    
+
     .product-name {
       font-size: 0.9rem;
     }
-    
+
     .display-7 {
       font-size: 1.5rem;
     }
-    
+
     .pagination .page-link {
       padding: 0.5rem 0.75rem;
       font-size: 0.9rem;
@@ -235,20 +240,20 @@
     .product-image {
       height: 180px;
     }
-    
+
     .product-card {
       padding: 10px;
     }
-    
+
     .col-6 {
       padding-left: 5px;
       padding-right: 5px;
     }
-    
+
     .product-name {
       font-size: 0.85rem;
     }
-    
+
     .item-price {
       font-size: 0.9rem;
     }
@@ -258,7 +263,7 @@
     .product-image {
       height: 160px;
     }
-    
+
     .product-card {
       padding: 8px;
     }

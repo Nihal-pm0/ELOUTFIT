@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Payment Options - Schafter{% endblock %}
+{% block title %}Payment Options - Eloutfit{% endblock %}
 
 {% block content %}
 <div class="container mt-4">
@@ -44,25 +44,6 @@
                                 Online Payment
                                 <br>
                                 <small class="fw-normal">Credit Card, Debit Card, UPI, Net Banking</small>
-                            </button>
-                        </form>
-                    </div>
-
-                    <!-- Cash on Delivery Option -->
-                    <div class="payment-option">
-                        <form method="post" action="{% url 'create_cod_order' %}">
-                            {% csrf_token %}
-                            <input type="hidden" name="full_name" value="{{ customer_data.full_name }}">
-                            <input type="hidden" name="email" value="{{ customer_data.email }}">
-                            <input type="hidden" name="phone" value="{{ customer_data.phone }}">
-                            <input type="hidden" name="address" value="{{ customer_data.address }}">
-                            <input type="hidden" name="total_amount" value="{{ total_amount }}">
-                            
-                            <button type="submit" class="btn btn-outline-secondary btn-lg w-100 py-3">
-                                <i class="fas fa-money-bill-wave me-2"></i>
-                                Cash on Delivery
-                                <br>
-                                <small class="fw-normal">Pay when you receive your order</small>
                             </button>
                         </form>
                     </div>
