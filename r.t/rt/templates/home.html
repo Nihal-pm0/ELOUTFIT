@@ -16,11 +16,9 @@
         </div>
       </div>
       <div class="col-md-5">
-        <div class="video-holder position-relative">
-          <video class="product-video" autoplay muted loop playsinline>
+        <div class="image-holder">
+          <video autoplay muted loop playsinline class="img-fluid">
             <source src="{% static 'videos/homebg.mp4' %}" type="video/mp4">
-            <!-- Fallback to image if video doesn't load -->
-            <img src="{% static 'images/eloutfit.logo.jpg' %}" alt="{{ product.name }}" class="img-fluid">
           </video>
         </div>
       </div>
