@@ -115,24 +115,24 @@
         {% if page_obj.has_other_pages %}
         <nav aria-label="Page navigation" class="mt-5">
           <ul class="pagination justify-content-center flex-wrap">
-            {% if page_obj.has_previous %}
+            {% if page_obj.number == num %}
+              <li class="page-item active">
+                <span class="page-link">{{ num }}</span>
+              </li>
+              {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+              <li class="page-item">
+                <a class="page-link" href="?page={{ num }}{% if sort %}&sort={{ sort }}{% endif %}">{{ num }}</a>
+              </li>
+              {% endif %}
+            {% endfor %}
+
+            {% if page_obj.has_next %}
             <li class="page-item">
-              <a class="page-link"
-                href="?page={{ page_obj.previous_page_number }}{% if sort %}&sort={{ sort }}{% endif %}">
-                <i class="bi bi-chevron-left"></i> Previous
+              <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if sort %}&sort={{ sort }}{% endif %}">
+                Next <i class="bi bi-chevron-right"></i>
               </a>
             </li>
             {% endif %}
-
-            {% for num in page_obj.paginator.page_range %}
-            {% if page_obj.number == num %}
-            <li class="page-item active">
-              <span class="page-link">{{ num }}</span>
-            </li>
-            {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %} <li class="page-item">
-              <a class="page-link" href="?page={{ num }}{% if sort %}&sort={{ sort }}{% endif %}">{{ num }}</a>
-              </li>
-              {% endif %}
               {% endfor %}
 
               {% if page_obj.has_next %}

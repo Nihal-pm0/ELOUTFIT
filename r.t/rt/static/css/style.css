@@ -675,6 +675,45 @@ h3.cart-title {
   }
 }
 
+/* Video Holder Styles */
+.video-holder {
+  width: 100%;
+  height: 250px;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.product-video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 8px;
+  transition: transform 0.3s ease;
+}
+
+.product-video-link:hover .product-video {
+  transform: scale(1.05);
+}
+
+/* Mobile Responsive for Video */
+@media (max-width: 768px) {
+  .video-holder {
+    height: 200px;
+  }
+}
+
+@media (max-width: 576px) {
+  .video-holder {
+    height: 180px;
+  }
+}
+
+@media (max-width: 400px) {
+  .video-holder {
+    height: 160px;
+  }
+}
+
 .search-popup input[type="search"] {
   font-size: 24px;
   height: 60px;

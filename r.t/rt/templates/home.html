@@ -3,7 +3,7 @@
 
 {% block title %}Home - Eloutfit{% endblock %}
 
-{% block content %}
+{% block content %} 
 <!-- Billboard Section -->
 <section id="billboard" class="position-relative overflow-hidden bg-light-blue">
   <div class="container">
@@ -16,14 +16,15 @@
         </div>
       </div>
       <div class="col-md-5">
-        <div class="image-holder">
-          <video autoplay muted loop playsinline class="img-fluid">
+        <div class="video-holder position-relative">
+          <video class="product-video" autoplay muted loop playsinline>
             <source src="{% static 'videos/homebg.mp4' %}" type="video/mp4">
+            <!-- Fallback to image if video doesn't load -->
+            <img src="{% static 'images/eloutfit.logo.jpg' %}" alt="{{ product.name }}" class="img-fluid">
           </video>
         </div>
       </div>
     </div>
-  </div>
 </section>
 
 <!-- Featured Products Section -->
@@ -49,7 +50,7 @@
                 <h3 class="card-title text-uppercase">
                   <a href="{{ product.get_absolute_url }}" class="text-decoration-none text-dark">{{ product.name }}</a>
                 </h3>
-                <span class="item-price text-primary">${{ product.price }}</span>
+                <span class="item-price text-primary">₹{{ product.price }}</span>
               </div>
             </div>
           </div>
@@ -147,8 +148,6 @@
                 <a href="{{ product.get_absolute_url }}" class="d-block">
                   <img src="{{ product.image.url }}" alt="{{ product.name }}" class="img-fluid product-image">
                 </a>
-                <!-- Quick Add to Cart -->
-
               </div>
 
               <!-- Product Details -->
@@ -157,7 +156,7 @@
                   <a href="{{ product.get_absolute_url }}" class="text-decoration-none text-dark product-name">{{
                     product.name }}</a>
                 </h4>
-                <span class="item-price text-primary fw-bold">${{ product.price }}</span>
+                <span class="item-price text-primary fw-bold">₹{{ product.price }}</span>
                 {% if not product.available %}
                 <span class="badge bg-secondary ms-2">Out of Stock</span>
                 {% endif %}
@@ -428,8 +427,9 @@
       </div>
       <div class="d-flex flex-wrap justify-content-center">
         <figure class="instagram-item pe-2 mb-3">
-          <a href="#" class="image-link position-relative">
-            <img src="{% static 'images/insta-item1.jpg' %}" alt="instagram" class="insta-image img-fluid"
+          <a href="https://www.instagram.com/eloutfit._?igsh=MWphdm5mYXg2YnI3Ng%3D%3D&utm_source=qr"
+            class="image-link position-relative">
+            <img src="{% static 'images/eloutfit.logo.jpg' %}" alt="instagram" class="insta-image img-fluid"
               style="width: 366.4px; height: 200px; object-fit: cover;">
             <div class="icon-overlay position-absolute d-flex justify-content-center">
               <svg class="instagram text-white" width="24" height="24">

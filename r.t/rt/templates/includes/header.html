@@ -14,7 +14,7 @@
       <div class="offcanvas offcanvas-end" tabindex="-1" id="bdNavbar" aria-labelledby="bdNavbarOffcanvasLabel">
         <div class="offcanvas-header px-4 pb-0">
           <a class="navbar-brand" href="{% url 'home' %}">
-            <img src="{% static 'images/eloutfit.logo.jpg' %}" class="logo" style="width: 200px; height: 80px;">
+            <img src="{% static 'images/eloutfit.logo.jpg' %}" class="logo" style="width: 90px; height: 80px;">
           </a>
           <button type="button" class="btn-close btn-close-black" data-bs-dismiss="offcanvas" aria-label="Close"
             data-bs-target="#bdNavbar"></button>
@@ -23,9 +23,6 @@
           <ul id="navbar" class="navbar-nav text-uppercase justify-content-end align-items-center flex-grow-1 pe-3">
             <li class="nav-item">
               <a class="nav-link me-4 active" href="{% url 'home' %}">Home</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link me-4" href="{% url 'cart:cart_detail' %}">Cart</a>
             </li>
             <li class="nav-item">
               <a class="nav-link me-4" href="{% url 'contact' %}">Contact</a>
