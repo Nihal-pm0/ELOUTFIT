@@ -19,9 +19,8 @@
                 <div class="card-body py-3">
                     <form action="{% url 'search' %}" method="get" class="row g-2 align-items-center">
                         <div class="col">
-                            <input type="text" name="q" class="form-control" 
-                                   value="{{ query }}" placeholder="Type 's' for shirts, 't' for tshirts..." 
-                                   required>
+                            <input type="text" name="q" class="form-control" value="{{ query }}"
+                                placeholder="Type 's' for shirts, 't' for tshirts..." required>
                         </div>
                         <div class="col-auto">
                             <button type="submit" class="btn btn-dark">Search</button>
@@ -54,8 +53,8 @@
                     <div class="product-card position-relative">
                         <div class="image-holder">
                             <a href="{{ product.get_absolute_url }}">
-                                <img src="{{ product.image.url }}" alt="{{ product.name }}" 
-                                     class="img-fluid" style="height: 200px; object-fit: cover;">
+                                <img src="{{ product.image.url }}" alt="{{ product.name }}" class="img-fluid"
+                                    style="height: 200px; object-fit: cover;">
                             </a>
                         </div>
                         <div class="card-detail pt-3">
@@ -66,14 +65,17 @@
                             </h5>
                             <span class="item-price text-primary fw-bold">₹{{ product.price }}</span>
                             {% if product.available %}
-                            <span class="badge bg-success ms-2 small">In Stock</span>
+                            <a href="{% url 'cart:add_to_cart' product.id %}"
+                                class="btn btn-dark btn-sm add-to-cart-btn text-nowrap ms-1 w-25">
+                                Add to Cart
+                            </a>
                             {% endif %}
                         </div>
                     </div>
                 </div>
                 {% endfor %}
             </div>
-            
+
             <!-- No Results Message -->
             {% elif query %}
             <div class="text-center py-5">

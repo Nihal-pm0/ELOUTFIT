@@ -7,19 +7,23 @@
 <!-- Billboard Section -->
 <section id="billboard" class="position-relative overflow-hidden bg-light-blue">
   <div class="container">
-    <div class="row d-flex align-items-center">
-      <div class="col-md-6">
-        <div class="banner-content mb-5">
-          <h1 class="display-2 text-uppercase text-dark pb-5">REDEFINE THE STREETS</h1>
-          <a href="{% url 'product_list' %}" 
-             class="btn btn-medium btn-dark text-uppercase btn-rounded-none shop-btn-mobile"
-             style="min-height: 44px; display: inline-flex; align-items: center; justify-content: center;">
-            Shop Product
-          </a>
+    <div class="row d-flex align-items-center min-vh-70-mobile"> <!-- Added min height -->
+      <div class="col-12 col-md-6">
+        <div class="banner-content mb-4 mb-md-5 pt-4 pt-md-0">
+          <h1 class="display-2 display-mobile text-uppercase text-dark pb-3 pb-md-5">
+            REDEFINE THE STREETS
+          </h1>
+          <div class="d-flex justify-content-center justify-content-md-start"> <!-- Added wrapper -->
+            <a href="{% url 'product_list' %}" 
+               class="btn btn-dark text-uppercase btn-shop-mobile"
+               style="min-height: 50px; min-width: 200px; display: inline-flex; align-items: center; justify-content: center; padding: 12px 32px;">
+              Shop Product
+            </a>
+          </div>
         </div>
       </div>
-      <div class="col-md-5">
-        <div class="image-holder">
+      <div class="col-12 col-md-5">
+        <div class="image-holder mt-4 mt-md-0">
           <video autoplay muted loop playsinline class="img-fluid">
             <source src="{% static 'videos/homebg.mp4' %}" type="video/mp4">
           </video>
@@ -28,28 +32,75 @@
     </div>
   </div>
 </section>
+
 <style>
-.shop-btn-mobile {
-    transition: all 0.3s ease;
-}
-
-.shop-btn-mobile:active {
-    transform: scale(0.98);
-    background-color: #333 !important;
-}
-
-/* Ensure button is tappable on all devices */
+/* Mobile-first responsive styles */
 @media (max-width: 768px) {
-    .shop-btn-mobile {
-        min-height: 50px;
-        font-size: 18px;
-        padding: 14px 28px;
-    }
-    
-    .banner-content {
-        text-align: center;
-    }
+  .display-mobile {
+    font-size: 2.5rem !important;
+    line-height: 1.2;
+    text-align: center;
+    margin-bottom: 2rem !important;
+  }
+  
+  .min-vh-70-mobile {
+    min-height: 70vh;
+    padding: 2rem 0;
+  }
+  
+  .banner-content {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .btn-shop-mobile {
+    font-size: 18px;
+    font-weight: 600;
+    width: 100%;
+    max-width: 280px;
+    margin: 0 auto;
+    border-radius: 8px;
+    z-index: 10;
+    position: relative;
+  }
+  
+  /* Ensure video doesn't push content down */
+  .image-holder {
+    margin-top: 2rem;
+  }
 }
+
+/* Tablet styles */
+@media (max-width: 991px) and (min-width: 769px) {
+  .display-mobile {
+    font-size: 3rem !important;
+  }
+}
+
+/* Desktop styles */
+@media (min-width: 992px) {
+  .display-mobile {
+    font-size: 4rem !important;
+  }
+}
+
+/* Button interactions */
+.btn-shop-mobile {
+  transition: all 0.3s ease;
+}
+
+.btn-shop-mobile:active {
+  transform: scale(0.98);
+  background-color: #333 !important;
+}
+
+/* Debug borders - remove after testing */
+/* .banner-content { border: 2px solid red; }
+.container { border: 2px solid blue; }
+#billboard { border: 2px solid green; } */
 </style>
 
 <!-- Featured Products Section -->
@@ -473,7 +524,7 @@
     slidesPerView: 1,
     spaceBetween: 10,
     loop: true, // ← ADD THIS
-    loopAdditionalSlides: 1, // ← ADD THIS
+    loopAdditionalSlides: 0, // ← ADD THIS
     pagination: {
       el: '.swiper-pagination',
       clickable: true,
@@ -498,8 +549,8 @@
   var categorySwiper = new Swiper('.product-watch-swiper', {
     slidesPerView: 1,
     spaceBetween: 10,
-    loop: true, // ← ADD THIS
-    loopAdditionalSlides: 1, // ← ADD THIS
+    loop: false, // ← ADD THIS
+    loopAdditionalSlides: 0, // ← ADD THIS
     pagination: {
       el: '.swiper-pagination',
       clickable: true,
