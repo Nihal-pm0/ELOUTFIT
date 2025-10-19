@@ -5,6 +5,26 @@
       <a class="navbar-brand" href="{% url 'home' %}">
         <img src="{% static 'images/eloutfit.png' %}" class="logo" style="width: 100px; height: 80px;">
       </a>
+      <li class="nav-item">
+              <div class="user-items ps-5">
+                <ul class="d-flex justify-content-end list-unstyled">
+                  <li class="search-item pe-3">
+                    <!-- Simple Search Form -->
+                    <form action="{% url 'search' %}" method="get" class="d-flex search-form">
+                      <div class="input-group" style="max-width: 200px;">
+                        <input type="text" name="q" class="form-control form-control-sm" placeholder="Search..."
+                          value="{{ request.GET.q }}" required>
+                        <button type="submit" class="btn btn-outline-dark btn-sm ms-3 pb-3">
+                          <svg class="search" width="16" height="16">
+                            <use xlink:href="#search"></use>
+                          </svg>
+                        </button>
+                      </div>
+                    </form>
+                  </li>
+                </ul>
+              </div>
+            </li>
       <button class="navbar-toggler d-flex d-lg-none order-3 p-2" type="button" data-bs-toggle="offcanvas"
         data-bs-target="#bdNavbar" aria-controls="bdNavbar" aria-expanded="false" aria-label="Toggle navigation">
         <svg class="navbar-icon">
@@ -23,6 +43,9 @@
           <ul id="navbar" class="navbar-nav text-uppercase justify-content-end align-items-center flex-grow-1 pe-3">
             <li class="nav-item">
               <a class="nav-link me-4 active" href="{% url 'home' %}">Home</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link me-4" href="{% url 'cart:cart_detail' %}">Cart</a>
             </li>
             <li class="nav-item">
               <a class="nav-link me-4" href="{% url 'contact' %}">Contact</a>
@@ -77,49 +100,6 @@
             </li>
             </li>
             {% endif %}
-
-
-
-            <li class="nav-item">
-              <div class="user-items ps-5">
-                <ul class="d-flex justify-content-end list-unstyled">
-                  <li class="search-item pe-3">
-                    <!-- Simple Search Form -->
-                    <form action="{% url 'search' %}" method="get" class="d-flex search-form">
-                      <div class="input-group" style="max-width: 200px;">
-                        <input type="text" name="q" class="form-control form-control-sm" placeholder="Search..."
-                          value="{{ request.GET.q }}" required>
-                        <button type="submit" class="btn btn-outline-dark btn-sm ms-3 pb-3">
-                          <svg class="search" width="16" height="16">
-                            <use xlink:href="#search"></use>
-                          </svg>
-                        </button>
-                      </div>
-                    </form>
-                  </li>
-                  <li class="pe-3">
-                    <a href="{% if user.is_authenticated %}{% url 'profile' %}{% else %}{% url 'login' %}{% endif %}">
-                      <svg class="user">
-                        <use xlink:href="#user"></use>
-                      </svg>
-                    </a>
-                  </li>
-                  <li>
-                    <a href="{% url 'cart:cart_detail' %}" class="position-relative">
-                      <svg class="cart">
-                        <use xlink:href="#cart"></use>
-                      </svg>
-                      {% if cart and cart.items.count > 0 %}
-                      <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
-                        style="font-size: 0.6rem; padding: 0.25rem 0.4rem;">
-                        {{ cart.items.count }}
-                      </span>
-                      {% endif %}
-                    </a>
-                  </li>
-                </ul>
-              </div>
-            </li>
           </ul>
         </div>
       </div>

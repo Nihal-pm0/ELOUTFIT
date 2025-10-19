@@ -71,9 +71,10 @@
                 </div>
               </div>
               <div class="col-12 col-sm-auto">
-                <button type="submit" class="btn btn-dark btn-lg mt-3 w-100">
-                  <i class="bi bi-cart-plus me-2"></i>Add to Cart
-                </button>
+                <a href="{% url 'cart:add_to_cart' product.id %}"
+                  class="btn btn-dark btn-sm add-to-cart-btn text-nowrap ms-1 w-25">
+                  Add to Cart
+                </a>
               </div>
             </div>
           </form>

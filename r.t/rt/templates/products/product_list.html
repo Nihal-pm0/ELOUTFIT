@@ -87,7 +87,7 @@
                   <span class="item-price text-primary fw-bold">₹{{ product.price }}</span>
                   {% if product.available %}
                   <a href="{% url 'cart:add_to_cart' product.id %}"
-                    class="btn btn-dark btn-sm add-to-cart-btn text-nowrap w-25">
+                    class="btn btn-dark btn-sm add-to-cart-btn text-nowrap ms-1 w-25">
                     Add to Cart
                   </a>
                   {% else %}

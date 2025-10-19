@@ -40,6 +40,7 @@
                     <form action="{% url 'cart:update_cart' item.id %}" method="post" class="d-inline">
                       {% csrf_token %}
                       <div class="input-group input-group-sm">
+                        <p>Qn</p>
                         <input type="number" name="quantity" value="{{ item.quantity }}" min="1" max="100"
                           class="form-control mt-4 me-3">
                         <button type="submit" class="btn btn-outline-primary btn-sm mt-4"

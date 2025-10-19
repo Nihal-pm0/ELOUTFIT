@@ -11,8 +11,11 @@
       <div class="col-md-6">
         <div class="banner-content mb-5">
           <h1 class="display-2 text-uppercase text-dark pb-5">REDEFINE THE STREETS</h1>
-          <a href="{% url 'product_list' %}" class="btn btn-medium btn-dark text-uppercase btn-rounded-none">Shop
-            Product</a>
+          <a href="{% url 'product_list' %}" 
+             class="btn btn-medium btn-dark text-uppercase btn-rounded-none shop-btn-mobile"
+             style="min-height: 44px; display: inline-flex; align-items: center; justify-content: center;">
+            Shop Product
+          </a>
         </div>
       </div>
       <div class="col-md-5">
@@ -23,7 +26,31 @@
         </div>
       </div>
     </div>
+  </div>
 </section>
+<style>
+.shop-btn-mobile {
+    transition: all 0.3s ease;
+}
+
+.shop-btn-mobile:active {
+    transform: scale(0.98);
+    background-color: #333 !important;
+}
+
+/* Ensure button is tappable on all devices */
+@media (max-width: 768px) {
+    .shop-btn-mobile {
+        min-height: 50px;
+        font-size: 18px;
+        padding: 14px 28px;
+    }
+    
+    .banner-content {
+        text-align: center;
+    }
+}
+</style>
 
 <!-- Featured Products Section -->
 <section id="mobile-products" class="product-store position-relative padding-large no-padding-top">
@@ -440,12 +467,13 @@
 </section>
 {% endblock %}
 
-{% block extra_scripts %}
-<script>
+{% block extra_scripts %}<script>
   // Initialize Swiper for featured products
   var productSwiper = new Swiper('.product-swiper', {
     slidesPerView: 1,
     spaceBetween: 10,
+    loop: true, // ← ADD THIS
+    loopAdditionalSlides: 1, // ← ADD THIS
     pagination: {
       el: '.swiper-pagination',
       clickable: true,
@@ -470,6 +498,8 @@
   var categorySwiper = new Swiper('.product-watch-swiper', {
     slidesPerView: 1,
     spaceBetween: 10,
+    loop: true, // ← ADD THIS
+    loopAdditionalSlides: 1, // ← ADD THIS
     pagination: {
       el: '.swiper-pagination',
       clickable: true,
