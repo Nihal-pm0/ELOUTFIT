@@ -5,12 +5,13 @@
 
 {% block content %}
 <!-- Billboard Section -->
-<section id="billboard" class="position-relative overflow-hidden bg-light-blue">
+<section id="billboard" class="position-relative overflow-hidden bg-dark">
   <!-- Background Video -->
   <div class="video-background position-absolute top-0 start-0 w-100 h-100">
     <video autoplay muted loop playsinline class="w-100 h-100" style="object-fit: cover;">
       <source src="{% static 'videos/homebg.mp4' %}" type="video/mp4">
     </video>
+    <!-- Reduced overlay opacity -->
     <div class="position-absolute top-0 start-0 w-100 h-100 bg-dark" style="opacity: 0.2;"></div>
   </div>
   
@@ -34,79 +35,27 @@
 </section>
 
 <style>
-/* Mobile-first responsive styles */
-#billboard {
-  min-height: 100vh;
-  position: relative;
+/* Video enhancement */
+.video-background video {
+  filter: brightness(1.1) contrast(1.1);
 }
 
-.video-background {
-  z-index: 0;
-}
-
-.position-relative.z-1 {
-  z-index: 1;
-}
-
+/* Mobile-specific video fixes */
 @media (max-width: 768px) {
+  .video-background video {
+    filter: brightness(1.15) contrast(1.15);
+  }
+  
+  .video-background .bg-dark {
+    opacity: 0.15 !important; /* Even lighter on mobile */
+  }
+  
   .display-mobile {
     font-size: 2.5rem !important;
-    line-height: 1.2;
-    text-align: center;
-    margin-bottom: 2rem !important;
+    text-shadow: 2px 2px 8px rgba(0,0,0,0.7);
   }
-  
-  .banner-content {
-    padding: 2rem 1rem;
-  }
-  
-  .btn-shop-mobile {
-    font-size: 18px;
-    font-weight: 600;
-    width: 100%;
-    max-width: 280px;
-    margin: 0 auto;
-    border-radius: 8px;
-    border: 2px solid #fff;
-  }
-  
-  /* Ensure text is readable over video */
-  .banner-content h1 {
-    text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
-  }
-}
-
-/* Tablet styles */
-@media (max-width: 991px) and (min-width: 769px) {
-  .display-mobile {
-    font-size: 3.5rem !important;
-  }
-}
-
-/* Desktop styles */
-@media (min-width: 992px) {
-  .display-mobile {
-    font-size: 4.5rem !important;
-  }
-}
-
-/* Button interactions */
-.btn-shop-mobile {
-  transition: all 0.3s ease;
-  background-color: rgba(255,255,255,0.9) !important;
-}
-
-.btn-shop-mobile:hover {
-  transform: translateY(-2px);
-  background-color: white !important;
-  box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-}
-
-.btn-shop-mobile:active {
-  transform: scale(0.98);
 }
 </style>
-
 <!-- Featured Products Section -->
 <section id="mobile-products" class="product-store position-relative padding-large no-padding-top">
   <div class="container">
