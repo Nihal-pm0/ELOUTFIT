@@ -3,7 +3,7 @@
 
 {% block title %}Home - Eloutfit{% endblock %}
 
-{% block content %} 
+{% block content %}
 <!-- Billboard Section -->
 <section id="billboard" class="position-relative overflow-hidden bg-light-blue">
   <div class="container">
@@ -147,12 +147,10 @@
                   <img src="{{ product.image.url }}" alt="{{ product.name }}" class="img-fluid product-image">
                 </a>
               </div>
-
               <!-- Product Details -->
               <div class="card-detail pt-3">
                 <h4 class="card-title mb-1">
-                  <a href="{{ product.get_absolute_url }}" class="text-decoration-none text-dark product-name">{{
-                    product.name }}</a>
+                  <a href="{{ product.get_absolute_url }}" class="text-decoration-none text-dark product-name">{{ product.name }}</a>
                 </h4>
                 <span class="item-price text-primary fw-bold">₹{{ product.price }}</span>
                 {% if not product.available %}
