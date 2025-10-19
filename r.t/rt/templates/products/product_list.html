@@ -38,8 +38,7 @@
           <select class="form-select" onchange="location = this.value;">
             <option value="{% url 'product_list' %}">All Categories</option>
             {% for cat in categories %}
-            <option value="{% url 'product_list_by_category' cat.slug %}" {% if category and category.slug==cat.slug
-              %}selected{% endif %}>
+            <option value="{% url 'product_list_by_category' cat.slug %}" {% if category and category.slug == cat.slug %}selected{% endif %}>
               {{ cat.name }}
             </option>
             {% endfor %}
@@ -54,10 +53,9 @@
           </h2>
           <div class="sorting">
             <select class="form-select" onchange="location = this.value;">
-              <option value="?sort=newest" {% if sort=='newest' %}selected{% endif %}>Newest First</option>
-              <option value="?sort=price_low" {% if sort=='price_low' %}selected{% endif %}>Price: Low to High</option>
-              <option value="?sort=price_high" {% if sort=='price_high' %}selected{% endif %}>Price: High to Low
-              </option>
+              <option value="?sort=newest" {% if sort == 'newest' %}selected{% endif %}>Newest First</option>
+              <option value="?sort=price_low" {% if sort == 'price_low' %}selected{% endif %}>Price: Low to High</option>
+              <option value="?sort=price_high" {% if sort == 'price_high' %}selected{% endif %}>Price: High to Low</option>
             </select>
           </div>
         </div>
@@ -111,38 +109,37 @@
           {% endfor %}
         </div>
 
-        <!-- Pagination -->
-        {% if page_obj.has_other_pages %}
+        <!-- Pagination - FIXED SECTION -->
+        {% if products.has_other_pages %}
         <nav aria-label="Page navigation" class="mt-5">
           <ul class="pagination justify-content-center flex-wrap">
-            {% if page_obj.number == num %}
+            {% if products.has_previous %}
+            <li class="page-item">
+              <a class="page-link" href="?page={{ products.previous_page_number }}{% if sort %}&sort={{ sort }}{% endif %}">
+                <i class="bi bi-chevron-left"></i> Previous
+              </a>
+            </li>
+            {% endif %}
+
+            {% for num in products.paginator.page_range %}
+              {% if products.number == num %}
               <li class="page-item active">
                 <span class="page-link">{{ num }}</span>
               </li>
-              {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+              {% elif num > products.number|add:'-3' and num < products.number|add:'3' %}
               <li class="page-item">
                 <a class="page-link" href="?page={{ num }}{% if sort %}&sort={{ sort }}{% endif %}">{{ num }}</a>
               </li>
               {% endif %}
             {% endfor %}
 
-            {% if page_obj.has_next %}
+            {% if products.has_next %}
             <li class="page-item">
-              <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if sort %}&sort={{ sort }}{% endif %}">
+              <a class="page-link" href="?page={{ products.next_page_number }}{% if sort %}&sort={{ sort }}{% endif %}">
                 Next <i class="bi bi-chevron-right"></i>
               </a>
             </li>
             {% endif %}
-              {% endfor %}
-
-              {% if page_obj.has_next %}
-              <li class="page-item">
-                <a class="page-link"
-                  href="?page={{ page_obj.next_page_number }}{% if sort %}&sort={{ sort }}{% endif %}">
-                  Next <i class="bi bi-chevron-right"></i>
-                </a>
-              </li>
-              {% endif %}
           </ul>
         </nav>
         {% endif %}
