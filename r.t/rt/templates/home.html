@@ -72,8 +72,9 @@
           <div class="swiper-slide">
             <div class="product-card position-relative">
               <div class="image-holder">
-                <a href="{% url 'single_product_view' slug=product.slug %}"><img src="{{ product.image.url }}"
-                    alt="{{ product.name }}" class="img-fluid" style="height: 250px; object-fit: cover;"></a>
+                <a href="{{ product.get_absolute_url }}" class="d-block">
+                  <img src="{{ product.image.url }}" alt="{{ product.name }}" class="img-fluid product-image">
+                </a>
               </div>
               <div class="card-detail d-flex justify-content-between align-items-baseline pt-3">
                 <h3 class="card-title text-uppercase">
