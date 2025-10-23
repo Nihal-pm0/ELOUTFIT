@@ -12,7 +12,7 @@
         <form action="{% url 'search' %}" method="get" class="search-form">
           <div class="input-group" style="max-width: 200px;">
             <input type="text" name="q" class="form-control form-control-sm" placeholder="Search..." value="{{ request.GET.q }}" required>
-            <button type="submit" class="btn btn-outline-dark btn-sm">
+            <button type="submit" class="btn btn-outline-dark btn-sm ms-2 pb-3">
               <svg class="search" width="16" height="16">
                 <use xlink:href="#search"></use>
               </svg>
