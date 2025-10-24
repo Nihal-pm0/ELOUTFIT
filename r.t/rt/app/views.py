@@ -137,14 +137,34 @@ def search_products(request):
         'results_count': products.count()
     })
 
-def custom_404(request, exception):
-    return render(request, 'errors/404.html', status=404)
 
-def custom_500(request):
-    return render(request, 'errors/500.html', status=500)
+from django.shortcuts import render
+from django.http import HttpResponse
+from django.views.decorators.http import require_GET
 
-def custom_403(request, exception):
-    return render(request, 'errors/403.html', status=403)
+# Your existing views...
 
-def custom_400(request, exception):
-    return render(request, 'errors/400.html', status=400)
+@require_GET
+def error_test_dashboard(request):
+    """Public error testing dashboard"""
+    return render(request, 'error_test_dashboard.html')
+
+@require_GET
+def test_404(request):
+    """Test 404 page"""
+    return render(request, '404.html', status=404)
+
+@require_GET
+def test_500(request):
+    """Test 500 page"""
+    return render(request, '500.html', status=500)
+
+@require_GET
+def test_403(request):
+    """Test 403 page"""
+    return render(request, '403.html', status=403)
+
+@require_GET
+def test_400(request):
+    """Test 400 page"""
+    return render(request, '400.html', status=400)

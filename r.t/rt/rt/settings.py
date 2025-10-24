@@ -29,7 +29,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.getenv('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.getenv('DEBUG', 'False').lower() == 'true'
+
+handler404 = 'app.views.test_404' 
+handler500 = 'app.views.test_500'
+handler403 = 'app.views.test_403'
+handler400 = 'app.views.test_400'
+DEBUG = False
 
 CSRF_TRUSTED_ORIGINS = os.getenv('CSRF_TRUSTED_ORIGINS', 'https://localhost').split(',')
 
