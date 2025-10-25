@@ -4,5 +4,287 @@
 {% block title %}Shopping Cart - Eloutfit{% endblock %}
 
 {% block content %}
-<h1>cart</h1>
+<section class="cart-section padding-large">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <h1 class="display-5 fw-bold mb-4">Shopping Cart</h1>
+
+                {% if cart.items.count > 0 %}
+                <div class="row">
+                    <div class="col-lg-8">
+                        <!-- Cart Items -->
+                        {% for item in cart.items.all %}
+                        <div class="cart-item card mb-4 shadow-sm">
+                            <div class="card-body">
+                                <div class="row align-items-center">
+                                    <!-- Product Image -->
+                                    <div class="col-md-2 mb-3 mb-md-0">
+                                        <div class="cart-item-image">
+                                            {% if item.product.image %}
+                                            <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}" 
+                                                 class="img-fluid rounded" style="max-height: 120px; object-fit: cover;">
+                                            {% else %}
+                                            <img src="{% static 'images/placeholder.jpg' %}" alt="No image" 
+                                                 class="img-fluid rounded" style="max-height: 120px; object-fit: cover;">
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Product Details -->
+                                    <div class="col-md-6">
+                                        <h5 class="card-title mb-2">
+                                            <a href="{{ item.product.get_absolute_url }}" class="text-dark text-decoration-none">
+                                                {{ item.product.name }}
+                                            </a>
+                                        </h5>
+                                        <p class="text-muted mb-2">{{ item.product.category.name }}</p>
+                                        
+                                        <!-- Stock Status -->
+                                        {% if item.product.available and item.product.stock > 0 %}
+                                            {% if item.product.stock < 10 %}
+                                            <span class="badge bg-warning text-dark mb-2">
+                                                Only {{ item.product.stock }} left in stock
+                                            </span>
+                                            {% else %}
+                                            <span class="badge bg-success mb-2">In Stock</span>
+                                            {% endif %}
+                                        {% else %}
+                                        <span class="badge bg-danger mb-2">Out of Stock</span>
+                                        {% endif %}
+                                        
+                                        <div class="d-flex align-items-center mt-3">
+                                            <span class="h5 text-primary mb-0 me-3">₹{{ item.product.price }}</span>
+                                            <span class="text-muted">Total: ₹{{ item.total_price }}</span>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Quantity Controls -->
+                                    <div class="col-md-4">
+                                        <form action="{% url 'cart:update_cart' item.id %}" method="post" class="mb-3">
+                                            {% csrf_token %}
+                                            <div class="input-group">
+                                                <input type="number" name="quantity" value="{{ item.quantity }}" 
+                                                       min="1" max="{{ item.product.stock }}" 
+                                                       class="form-control text-center"
+                                                       {% if not item.product.available %}disabled{% endif %}>
+                                                <button type="submit" class="btn btn-outline-primary" 
+                                                        {% if not item.product.available %}disabled{% endif %}>
+                                                    Update
+                                                </button>
+                                            </div>
+                                        </form>
+                                        
+                                        <a href="{% url 'cart:remove_from_cart' item.id %}" 
+                                           class="btn btn-outline-danger btn-sm w-100"
+                                           onclick="return confirm('Remove {{ item.product.name }} from cart?')">
+                                            Remove Item
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+
+                        <!-- Action Buttons -->
+                        <div class="d-flex flex-column flex-md-row justify-content-between gap-3 mt-4">
+                            <a href="{% url 'product_list' %}" class="btn btn-outline-dark btn-lg">
+                                ← Continue Shopping
+                            </a>
+                            <a href="{% url 'cart:clear_cart' %}" class="btn btn-outline-danger btn-lg"
+                               onclick="return confirm('Are you sure you want to clear your entire cart?')">
+                                Clear Cart
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Order Summary -->
+                    <div class="col-lg-4">
+                        <div class="card shadow-sm">
+                            <div class="card-body">
+                                <h5 class="card-title border-bottom pb-3">Order Summary</h5>
+                                
+                                <div class="summary-details">
+                                    <div class="d-flex justify-content-between mb-3">
+                                        <span>Items ({{ cart.total_quantity }}):</span>
+                                        <span class="fw-bold">₹{{ cart.total_price }}</span>
+                                    </div>
+                                    <div class="d-flex justify-content-between mb-3">
+                                        <span>Shipping:</span>
+                                        <span class="text-success">FREE</span>
+                                    </div>
+                                    <div class="d-flex justify-content-between mb-3">
+                                        <span>Tax:</span>
+                                        <span>₹0.00</span>
+                                    </div>
+                                    <hr>
+                                    <div class="d-flex justify-content-between mb-4">
+                                        <strong class="fs-5">Total:</strong>
+                                        <strong class="fs-5 text-primary">₹{{ cart.total_price }}</strong>
+                                    </div>
+                                </div>
+
+                                <!-- Checkout Validation -->
+                                {% for item in cart.items.all %}
+                                    {% if item.quantity > item.product.stock or not item.product.available %}
+                                    <div class="alert alert-danger mb-3">
+                                        <i class="fas fa-exclamation-circle me-2"></i>
+                                        Please update your cart before checkout
+                                    </div>
+                                    {% break %}
+                                    {% endif %}
+                                {% endfor %}
+
+                                <!-- Checkout Button -->
+                                {% if cart.is_valid %}
+                                <a href="{% url 'checkout' %}" class="btn btn-success btn-lg w-100 py-3">
+                                    <i class="fas fa-credit-card me-2"></i>
+                                    Proceed to Checkout
+                                </a>
+                                {% else %}
+                                <button class="btn btn-secondary btn-lg w-100 py-3" disabled>
+                                    <i class="fas fa-exclamation-triangle me-2"></i>
+                                    Fix Cart Issues to Checkout
+                                </button>
+                                {% endif %}
+
+                                <div class="text-center mt-3">
+                                    <small class="text-muted">
+                                        <i class="fas fa-lock me-1"></i>
+                                        Secure checkout • 
+                                        <i class="fas fa-shipping-fast me-1"></i>
+                                        Free shipping
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {% else %}
+                <!-- Empty Cart State -->
+                <div class="text-center py-5 my-5">
+                    <div class="empty-cart-icon mb-4">
+                        <i class="fas fa-shopping-cart" style="font-size: 4rem; color: #6c757d;"></i>
+                    </div>
+                    <h3 class="mb-3">Your cart is empty</h3>
+                    <p class="text-muted mb-4">Browse our products and add some items to your cart.</p>
+                    <a href="{% url 'product_list' %}" class="btn btn-primary btn-lg px-5">
+                        Start Shopping
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.cart-section {
+    background: #f8f9fa;
+    min-height: 70vh;
+}
+
+.cart-item {
+    border: none;
+    border-radius: 12px;
+    transition: transform 0.2s ease;
+}
+
+.cart-item:hover {
+    transform: translateY(-2px);
+}
+
+.cart-item-image {
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.summary-details {
+    font-size: 1.1rem;
+}
+
+.btn-lg {
+    padding: 0.75rem 1.5rem;
+}
+
+.empty-cart-icon {
+    opacity: 0.7;
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+    .cart-item .card-body {
+        padding: 1rem;
+    }
+    
+    .cart-item .row {
+        text-align: center;
+    }
+    
+    .cart-item-image {
+        margin: 0 auto 1rem;
+        max-width: 120px;
+    }
+    
+    .btn-lg {
+        padding: 0.75rem 1rem;
+        font-size: 1rem;
+    }
+    
+    .display-5 {
+        font-size: 2rem;
+    }
+}
+
+/* Stock validation styles */
+.input-group input:invalid {
+    border-color: #dc3545;
+}
+
+.badge {
+    font-size: 0.8rem;
+    padding: 0.4rem 0.8rem;
+}
+</style>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+// Simple client-side validation
+document.addEventListener('DOMContentLoaded', function() {
+    // Quantity input validation
+    const quantityInputs = document.querySelectorAll('input[type="number"]');
+    
+    quantityInputs.forEach(input => {
+        input.addEventListener('change', function() {
+            const maxStock = parseInt(this.getAttribute('max'));
+            const value = parseInt(this.value);
+            
+            if (value > maxStock) {
+                alert(`Only ${maxStock} items available. Quantity adjusted to maximum.`);
+                this.value = maxStock;
+            }
+            
+            if (value < 1) {
+                this.value = 1;
+            }
+        });
+    });
+    
+    // Prevent checkout if cart has issues
+    const checkoutBtn = document.querySelector('a[href*="checkout"]');
+    if (checkoutBtn) {
+        checkoutBtn.addEventListener('click', function(e) {
+            const validationAlert = document.querySelector('.alert-danger');
+            if (validationAlert && validationAlert.style.display !== 'none') {
+                e.preventDefault();
+                alert('Please fix cart issues before proceeding to checkout.');
+            }
+        });
+    }
+});
+</script>
 {% endblock %}
