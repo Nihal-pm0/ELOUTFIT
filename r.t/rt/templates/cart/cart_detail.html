@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Shopping Cart - Eloutfit{% endblock %}
+{% block title %}Shopping Cart - Schafter{% endblock %}
 
 {% block content %}
 <section class="cart-detail padding-large">
@@ -34,7 +34,7 @@
                     {% endif %}
                   </div>
                   <div class="col-md-3">
-                    <p class="h5 mb-0">₹{{ item.product.price }}</p>
+                    <p class="h5 mb-0">${{ item.product.price }}</p>
                   </div>
                   <div class="col-md-3">
                     <form action="{% url 'cart:update_cart' item.id %}" method="post" class="d-inline">
