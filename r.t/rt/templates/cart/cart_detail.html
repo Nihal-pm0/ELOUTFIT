@@ -4,31 +4,66 @@
 {% block title %}Shopping Cart - Eloutfit{% endblock %}
 
 {% block content %}
-<!-- Mobile-Optimized Cart Page with Bootstrap -->
-<div class="cart-page">
-    <div class="container-fluid px-3 px-md-4 py-4">
-        <!-- Header -->
-        <div class="cart-header mb-4">
+<!-- Mobile-Optimized Cart -->
+<div class="cart-page min-vh-100 bg-light">
+    <!-- Header -->
+    <div class="cart-header bg-primary text-white py-3 sticky-top shadow-sm">
+        <div class="container">
             <div class="d-flex justify-content-between align-items-center">
-                <h1 class="page-title h3 mb-0">Shopping Cart</h1>
-                {% if cart.items.count > 0 %}
-                <div class="cart-stats">
-                    <span class="badge bg-primary">{{ cart.total_quantity }} item{{ cart.total_quantity|pluralize }}</span>
+                <div class="d-flex align-items-center">
+                    <a href="{% url 'product_list' %}" class="text-white me-3 fs-5">
+                        <i class="fas fa-arrow-left"></i>
+                    </a>
+                    <h1 class="h5 mb-0 fw-bold">My Cart</h1>
                 </div>
+                {% if cart.items.count > 0 %}
+                <span class="badge bg-light text-primary fs-6">{{ cart.total_quantity }} item{{ cart.total_quantity|pluralize }}</span>
                 {% endif %}
             </div>
         </div>
+    </div>
 
-        {% if cart.items.count > 0 %}
-        <!-- Cart Items -->
-        <div class="cart-items-section mb-4">
+    {% if cart.items.count > 0 %}
+    <div class="container py-3">
+        <!-- Stock Validation Alerts -->
+        <div class="cart-alerts mb-3">
             {% for item in cart.items.all %}
-            <div class="card mb-3 cart-item-card" data-item-id="{{ item.id }}">
+                {% if item.quantity > item.product.stock %}
+                <div class="alert alert-warning d-flex align-items-center">
+                    <i class="fas fa-exclamation-triangle me-2 fs-5"></i>
+                    <div>
+                        <strong>"{{ item.product.name }}"</strong> - Only <strong>{{ item.product.stock }}</strong> available. 
+                        Please update quantity.
+                    </div>
+                </div>
+                {% endif %}
+                {% if not item.product.available %}
+                <div class="alert alert-danger d-flex align-items-center">
+                    <i class="fas fa-times-circle me-2 fs-5"></i>
+                    <div>
+                        <strong>"{{ item.product.name }}"</strong> is out of stock. Please remove it.
+                    </div>
+                </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+
+        <!-- Cart Items -->
+        <div class="cart-items">
+            {% for item in cart.items.all %}
+            <div class="cart-item-card card mb-3 border-0 shadow-sm position-relative" data-item-id="{{ item.id }}">
+                <!-- Out of Stock Overlay -->
+                {% if not item.product.available %}
+                <div class="position-absolute top-0 start-0 w-100 h-100 bg-light bg-opacity-75 d-flex align-items-center justify-content-center z-1">
+                    <span class="badge bg-danger fs-6">Out of Stock</span>
+                </div>
+                {% endif %}
+
                 <div class="card-body">
-                    <div class="row">
+                    <div class="row g-3">
                         <!-- Product Image -->
-                        <div class="col-4 col-md-3">
-                            <div class="item-image ratio ratio-1x1">
+                        <div class="col-3">
+                            <div class="cart-item-image ratio ratio-1x1 bg-light rounded">
                                 {% if item.product.image %}
                                 <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}" 
                                      class="img-fluid rounded" loading="lazy">
@@ -40,68 +75,83 @@
                         </div>
                         
                         <!-- Product Details -->
-                        <div class="col-8 col-md-9">
-                            <div class="d-flex justify-content-between align-items-start mb-2">
-                                <h3 class="product-name h6 mb-0">
-                                    <a href="{{ item.product.get_absolute_url }}" class="text-decoration-none text-dark">{{ item.product.name }}</a>
-                                </h3>
-                                <a href="{% url 'cart:remove_from_cart' item.id %}" class="remove-btn text-danger" 
-                                   onclick="return confirm('Remove this item from cart?')">
+                        <div class="col-9">
+                            <div class="d-flex justify-content-between align-items-start mb-1">
+                                <h6 class="cart-item-title mb-0 fw-bold text-dark fs-6">
+                                    <a href="{{ item.product.get_absolute_url }}" class="text-dark text-decoration-none">
+                                        {{ item.product.name|truncatechars:35 }}
+                                    </a>
+                                </h6>
+                                <a href="{% url 'cart:remove_from_cart' item.id %}" 
+                                   class="btn btn-sm btn-outline-danger remove-btn"
+                                   onclick="return confirm('Remove {{ item.product.name }} from cart?')">
                                     <i class="fas fa-trash"></i>
                                 </a>
                             </div>
                             
-                            <div class="product-category small text-muted mb-2">
+                            <!-- Category -->
+                            <p class="text-muted small mb-2">
                                 {{ item.product.category.name }}
-                            </div>
+                            </p>
                             
+                            <!-- Stock Status -->
                             <div class="stock-status mb-2">
                                 {% if item.product.available and item.product.stock > 0 %}
                                     {% if item.product.stock < 10 %}
-                                    <span class="badge bg-warning text-dark">
+                                    <span class="badge bg-warning text-dark small">
                                         <i class="fas fa-exclamation-triangle me-1"></i>
-                                        Only {{ item.product.stock }} left!
+                                        Only {{ item.product.stock }} left
                                     </span>
                                     {% else %}
-                                    <span class="badge bg-success">
+                                    <span class="badge bg-success small">
                                         <i class="fas fa-check-circle me-1"></i>
                                         In Stock
                                     </span>
                                     {% endif %}
                                 {% else %}
-                                <span class="badge bg-danger">
+                                <span class="badge bg-danger small">
                                     <i class="fas fa-times-circle me-1"></i>
                                     Out of Stock
                                 </span>
                                 {% endif %}
                             </div>
                             
-                            <div class="price-section d-flex justify-content-between align-items-center mb-3">
-                                <div class="unit-price fw-bold">₹{{ item.product.price }}</div>
-                                <div class="total-price fw-bold">₹{{ item.total_price }}</div>
+                            <!-- Price and Quantity -->
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div class="price-section">
+                                    <div class="item-price fw-bold text-primary fs-6">₹{{ item.product.price }}</div>
+                                    <div class="total-price small text-muted">
+                                        Total: ₹<span class="fw-bold item-total" data-item-price="{{ item.product.price }}">{{ item.total_price }}</span>
+                                    </div>
+                                </div>
+                                
+                                <!-- Quantity Controls -->
+                                <div class="quantity-controls">
+                                    <div class="input-group input-group-sm" style="width: 130px;">
+                                        <button type="button" class="btn btn-outline-secondary qty-btn minus" 
+                                                data-item-id="{{ item.id }}"
+                                                {% if item.quantity <= 1 %}disabled{% endif %}>
+                                            <i class="fas fa-minus"></i>
+                                        </button>
+                                        <input type="number" name="quantity" value="{{ item.quantity }}" 
+                                               min="1" max="{{ item.product.stock }}" 
+                                               class="form-control text-center qty-input fs-6" 
+                                               data-item-id="{{ item.id }}"
+                                               data-price="{{ item.product.price }}"
+                                               data-stock="{{ item.product.stock }}"
+                                               {% if not item.product.available %}disabled{% endif %}>
+                                        <button type="button" class="btn btn-outline-secondary qty-btn plus" 
+                                                data-item-id="{{ item.id }}"
+                                                {% if item.quantity >= item.product.stock %}disabled{% endif %}>
+                                            <i class="fas fa-plus"></i>
+                                        </button>
+                                    </div>
+                                </div>
                             </div>
                             
-                            <div class="quantity-controls">
-                                <form action="{% url 'cart:update_cart' item.id %}" method="post" 
-                                      class="quantity-form d-flex align-items-center" 
-                                      data-max-stock="{{ item.product.stock }}">
-                                    {% csrf_token %}
-                                    <div class="input-group input-group-sm" style="width: 140px;">
-                                        <button type="button" class="btn btn-outline-secondary qty-btn minus" data-action="decrease">-</button>
-                                        <input type="number" name="quantity" value="{{ item.quantity }}" 
-                                               min="1" max="{{ item.product.stock }}" class="form-control text-center qty-input" 
-                                               data-item-id="{{ item.id }}" data-current-stock="{{ item.product.stock }}">
-                                        <button type="button" class="btn btn-outline-secondary qty-btn plus" data-action="increase">+</button>
-                                    </div>
-                                    <button type="submit" class="btn btn-primary btn-sm ms-2 update-btn">
-                                        <i class="fas fa-sync-alt"></i>
-                                    </button>
-                                </form>
-                            </div>
-
-                            <!-- Stock validation message -->
+                            <!-- Stock Validation Message -->
                             <div class="stock-message mt-2" id="stock-message-{{ item.id }}" style="display: none;">
-                                <span class="stock-error small"></span>
+                                <div class="alert alert-danger py-1 mb-0 small"></div>
                             </div>
                         </div>
                     </div>
@@ -110,194 +160,545 @@
             {% endfor %}
         </div>
 
-        <!-- Cart Validation Messages -->
-        <div class="cart-alerts mb-4">
+        <!-- Continue Shopping -->
+        <div class="text-center mb-4">
+            <a href="{% url 'product_list' %}" class="btn btn-outline-primary btn-lg w-100 py-3">
+                <i class="fas fa-plus me-2"></i>
+                Continue Shopping
+            </a>
+        </div>
+    </div>
+
+    <!-- Order Summary - Fixed Bottom -->
+    <div class="order-summary-fixed fixed-bottom bg-white border-top shadow-lg">
+        <div class="container py-3">
+            <!-- Summary Details -->
+            <div class="summary-details mb-3">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <span class="text-muted">Subtotal ({{ cart.total_quantity }} items)</span>
+                    <span class="fw-bold cart-subtotal">₹{{ cart.total_price }}</span>
+                </div>
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <span class="text-muted">Shipping</span>
+                    <span class="text-success fw-bold">FREE</span>
+                </div>
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <span class="text-muted">Tax</span>
+                    <span>₹0.00</span>
+                </div>
+                <hr class="my-2">
+                <div class="d-flex justify-content-between align-items-center">
+                    <strong class="fs-5">Total</strong>
+                    <strong class="fs-5 text-primary cart-total">₹{{ cart.total_price }}</strong>
+                </div>
+            </div>
+
+            <!-- Checkout Validation -->
+            <div class="checkout-validation mb-3">
+                {% for item in cart.items.all %}
+                    {% if item.quantity > item.product.stock or not item.product.available %}
+                    <div class="alert alert-danger d-flex align-items-center mb-2">
+                        <i class="fas fa-exclamation-circle me-2"></i>
+                        <div class="small">Please update your cart before checkout</div>
+                    </div>
+                    {% break %}
+                    {% endif %}
+                {% endfor %}
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="action-buttons">
+                <div class="d-grid gap-2">
+                    {% if cart.is_valid %}
+                    <a href="{% url 'checkout' %}" class="btn btn-success btn-lg py-3 fs-6">
+                        <i class="fas fa-credit-card me-2"></i>
+                        Proceed to Checkout
+                    </a>
+                    {% else %}
+                    <button class="btn btn-secondary btn-lg py-3 fs-6" disabled>
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        Fix Cart Issues to Checkout
+                    </button>
+                    {% endif %}
+                    
+                    <a href="{% url 'cart:clear_cart' %}" 
+                       class="btn btn-outline-danger py-2"
+                       onclick="return confirm('Are you sure you want to clear your entire cart?')">
+                        <i class="fas fa-trash me-2"></i>
+                        Clear Cart
+                    </a>
+                </div>
+            </div>
+
+            <!-- Security Badge -->
+            <div class="text-center mt-3">
+                <div class="security-badges">
+                    <small class="text-muted">
+                        <i class="fas fa-lock me-1"></i>
+                        Secure checkout • 
+                        <i class="fas fa-shipping-fast me-1"></i>
+                        Free shipping
+                    </small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% else %}
+    <!-- Empty Cart State -->
+    <div class="empty-cart-state d-flex align-items-center justify-content-center min-vh-100">
+        <div class="container py-5">
+            <div class="text-center py-5">
+                <div class="empty-cart-icon text-muted mb-4">
+                    <i class="fas fa-shopping-cart" style="font-size: 5rem;"></i>
+                </div>
+                <h2 class="h3 mb-3 fw-bold">Your cart is empty</h2>
+                <p class="text-muted mb-4 fs-5">
+                    Looks like you haven't added any items to your cart yet.
+                </p>
+                <a href="{% url 'product_list' %}" class="btn btn-primary btn-lg py-3 px-5 fs-5">
+                    <i class="fas fa-bag-shopping me-2"></i>
+                    Start Shopping
+                </a>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Shopping Cart - Eloutfit{% endblock %}
+
+{% block content %}
+<!-- Mobile-Optimized Cart -->
+<div class="cart-page min-vh-100 bg-light">
+    <!-- Header -->
+    <div class="cart-header bg-primary text-white py-3 sticky-top shadow-sm">
+        <div class="container">
+            <div class="d-flex justify-content-between align-items-center">
+                <div class="d-flex align-items-center">
+                    <a href="{% url 'product_list' %}" class="text-white me-3 fs-5">
+                        <i class="fas fa-arrow-left"></i>
+                    </a>
+                    <h1 class="h5 mb-0 fw-bold">My Cart</h1>
+                </div>
+                {% if cart.items.count > 0 %}
+                <span class="badge bg-light text-primary fs-6" id="cart-badge">{{ cart.total_quantity }} item{{ cart.total_quantity|pluralize }}</span>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    {% if cart.items.count > 0 %}
+    <div class="container py-3">
+        <!-- Stock Validation Alerts -->
+        <div class="cart-alerts mb-3" id="cart-alerts">
             {% for item in cart.items.all %}
                 {% if item.quantity > item.product.stock %}
-                <div class="alert alert-warning d-flex align-items-center stock-alert">
-                    <i class="fas fa-exclamation-triangle me-2"></i>
+                <div class="alert alert-warning d-flex align-items-center">
+                    <i class="fas fa-exclamation-triangle me-2 fs-5"></i>
                     <div>
-                        <strong>"{{ item.product.name }}"</strong> only has {{ item.product.stock }} item(s) in stock. 
-                        Your quantity has been adjusted.
+                        <strong>"{{ item.product.name }}"</strong> - Only <strong>{{ item.product.stock }}</strong> available. 
+                        Please update quantity.
+                    </div>
+                </div>
+                {% endif %}
+                {% if not item.product.available %}
+                <div class="alert alert-danger d-flex align-items-center">
+                    <i class="fas fa-times-circle me-2 fs-5"></i>
+                    <div>
+                        <strong>"{{ item.product.name }}"</strong> is out of stock. Please remove it.
                     </div>
                 </div>
                 {% endif %}
             {% endfor %}
         </div>
 
-        <!-- Action Buttons -->
-        <div class="cart-actions-mobile d-grid gap-2 d-md-flex justify-content-md-between mb-4">
-            <a href="{% url 'product_list' %}" class="btn btn-outline-secondary">
-                <i class="fas fa-arrow-left me-2"></i>
-                Continue Shopping
-            </a>
-            <a href="{% url 'cart:clear_cart' %}" class="btn btn-outline-danger"
-               onclick="return confirm('Are you sure you want to clear your entire cart?')">
-                <i class="fas fa-trash me-2"></i>
-                Clear Cart
-            </a>
-        </div>
+        <!-- Cart Items -->
+        <div class="cart-items">
+            {% for item in cart.items.all %}
+            <div class="cart-item-card card mb-3 border-0 shadow-sm position-relative" data-item-id="{{ item.id }}" id="cart-item-{{ item.id }}">
+                <!-- Out of Stock Overlay -->
+                {% if not item.product.available %}
+                <div class="position-absolute top-0 start-0 w-100 h-100 bg-light bg-opacity-75 d-flex align-items-center justify-content-center z-1">
+                    <span class="badge bg-danger fs-6">Out of Stock</span>
+                </div>
+                {% endif %}
 
-        <!-- Order Summary - Sticky on Mobile -->
-        <div class="order-summary-sticky">
-            <div class="card shadow-sm">
                 <div class="card-body">
-                    <h3 class="card-title h5 mb-3">Order Summary</h3>
-                    
-                    <div class="summary-details mb-3">
-                        <div class="d-flex justify-content-between mb-2">
-                            <span>Subtotal ({{ cart.total_quantity }} items)</span>
-                            <span>₹{{ cart.total_price }}</span>
-                        </div>
-                        <div class="d-flex justify-content-between mb-2">
-                            <span>Shipping</span>
-                            <span class="text-success">FREE</span>
-                        </div>
-                        <div class="d-flex justify-content-between mb-2">
-                            <span>Tax</span>
-                            <span>₹0.00</span>
-                        </div>
-                        <hr>
-                        <div class="d-flex justify-content-between mb-3">
-                            <strong>Total</strong>
-                            <strong>₹{{ cart.total_price }}</strong>
-                        </div>
-                    </div>
-
-                    <!-- Checkout validation -->
-                    <div class="checkout-validation mb-3">
-                        {% for item in cart.items.all %}
-                            {% if item.quantity > item.product.stock or not item.product.available %}
-                            <div class="alert alert-danger d-flex align-items-center checkout-error">
-                                <i class="fas fa-exclamation-circle me-2"></i>
-                                <div>Please update your cart before checkout</div>
+                    <div class="row g-3">
+                        <!-- Product Image -->
+                        <div class="col-3">
+                            <div class="cart-item-image ratio ratio-1x1 bg-light rounded">
+                                {% if item.product.image %}
+                                <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}" 
+                                     class="img-fluid rounded" loading="lazy">
+                                {% else %}
+                                <img src="{% static 'images/placeholder.jpg' %}" alt="No image" 
+                                     class="img-fluid rounded" loading="lazy">
+                                {% endif %}
                             </div>
-                            {% endif %}
-                        {% endfor %}
-                    </div>
-                    
-                    <a href="{% url 'checkout' %}" 
-                       class="btn btn-success w-100 {% if not cart.is_valid %}disabled{% endif %}">
-                        <i class="fas fa-credit-card me-2"></i>
-                        {% if cart.is_valid %}
-                        Proceed to Checkout
-                        {% else %}
-                        Update Cart to Checkout
-                        {% endif %}
-                    </a>
-                    
-                    <div class="text-center mt-3 text-muted small">
-                        <i class="fas fa-shipping-fast me-1"></i>
-                        Free shipping on all orders
+                        </div>
+                        
+                        <!-- Product Details -->
+                        <div class="col-9">
+                            <div class="d-flex justify-content-between align-items-start mb-1">
+                                <h6 class="cart-item-title mb-0 fw-bold text-dark fs-6">
+                                    <a href="{{ item.product.get_absolute_url }}" class="text-dark text-decoration-none">
+                                        {{ item.product.name|truncatechars:35 }}
+                                    </a>
+                                </h6>
+                                <a href="{% url 'cart:remove_from_cart' item.id %}" 
+                                   class="btn btn-sm btn-outline-danger remove-btn"
+                                   onclick="return confirm('Remove {{ item.product.name }} from cart?')">
+                                    <i class="fas fa-trash"></i>
+                                </a>
+                            </div>
+                            
+                            <!-- Category -->
+                            <p class="text-muted small mb-2">
+                                {{ item.product.category.name }}
+                            </p>
+                            
+                            <!-- Stock Status -->
+                            <div class="stock-status mb-2">
+                                {% if item.product.available and item.product.stock > 0 %}
+                                    {% if item.product.stock < 10 %}
+                                    <span class="badge bg-warning text-dark small">
+                                        <i class="fas fa-exclamation-triangle me-1"></i>
+                                        Only {{ item.product.stock }} left
+                                    </span>
+                                    {% else %}
+                                    <span class="badge bg-success small">
+                                        <i class="fas fa-check-circle me-1"></i>
+                                        In Stock
+                                    </span>
+                                    {% endif %}
+                                {% else %}
+                                <span class="badge bg-danger small">
+                                    <i class="fas fa-times-circle me-1"></i>
+                                    Out of Stock
+                                </span>
+                                {% endif %}
+                            </div>
+                            
+                            <!-- Price and Quantity -->
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div class="price-section">
+                                    <div class="item-price fw-bold text-primary fs-6">₹{{ item.product.price }}</div>
+                                    <div class="total-price small text-muted">
+                                        Total: ₹<span class="fw-bold item-total" data-item-price="{{ item.product.price }}">{{ item.total_price }}</span>
+                                    </div>
+                                </div>
+                                
+                                <!-- Quantity Controls -->
+                                <div class="quantity-controls">
+                                    <div class="input-group input-group-sm" style="width: 130px;">
+                                        <button type="button" class="btn btn-outline-secondary qty-btn minus" 
+                                                data-item-id="{{ item.id }}"
+                                                {% if item.quantity <= 1 %}disabled{% endif %}>
+                                            <i class="fas fa-minus"></i>
+                                        </button>
+                                        <input type="number" name="quantity" value="{{ item.quantity }}" 
+                                               min="1" max="{{ item.product.stock }}" 
+                                               class="form-control text-center qty-input fs-6" 
+                                               data-item-id="{{ item.id }}"
+                                               data-price="{{ item.product.price }}"
+                                               data-stock="{{ item.product.stock }}"
+                                               {% if not item.product.available %}disabled{% endif %}>
+                                        <button type="button" class="btn btn-outline-secondary qty-btn plus" 
+                                                data-item-id="{{ item.id }}"
+                                                {% if item.quantity >= item.product.stock %}disabled{% endif %}>
+                                            <i class="fas fa-plus"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Stock Validation Message -->
+                            <div class="stock-message mt-2" id="stock-message-{{ item.id }}" style="display: none;">
+                                <div class="alert alert-danger py-1 mb-0 small"></div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
+            {% endfor %}
         </div>
 
-        {% else %}
-        <!-- Empty Cart State -->
-        <div class="empty-cart-state text-center py-5">
-            <div class="empty-cart-icon text-muted mb-4" style="font-size: 4rem;">
-                <i class="fas fa-shopping-cart"></i>
-            </div>
-            <h2 class="h4 mb-3">Your cart is empty</h2>
-            <p class="empty-cart-message text-muted mb-4">
-                Looks like you haven't added any items to your cart yet.
-            </p>
-            <a href="{% url 'product_list' %}" class="btn btn-primary btn-lg">
-                <i class="fas fa-bag-shopping me-2"></i>
-                Start Shopping
+        <!-- Continue Shopping -->
+        <div class="text-center mb-4">
+            <a href="{% url 'product_list' %}" class="btn btn-outline-primary btn-lg w-100 py-3">
+                <i class="fas fa-plus me-2"></i>
+                Continue Shopping
             </a>
         </div>
-        {% endif %}
     </div>
+
+    <!-- Order Summary - Fixed Bottom -->
+    <div class="order-summary-fixed fixed-bottom bg-white border-top shadow-lg">
+        <div class="container py-3">
+            <!-- Summary Details -->
+            <div class="summary-details mb-3">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <span class="text-muted">Subtotal (<span id="summary-quantity">{{ cart.total_quantity }}</span> items)</span>
+                    <span class="fw-bold cart-subtotal">₹{{ cart.total_price }}</span>
+                </div>
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <span class="text-muted">Shipping</span>
+                    <span class="text-success fw-bold">FREE</span>
+                </div>
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <span class="text-muted">Tax</span>
+                    <span>₹0.00</span>
+                </div>
+                <hr class="my-2">
+                <div class="d-flex justify-content-between align-items-center">
+                    <strong class="fs-5">Total</strong>
+                    <strong class="fs-5 text-primary cart-total">₹{{ cart.total_price }}</strong>
+                </div>
+            </div>
+
+            <!-- Checkout Validation -->
+            <div class="checkout-validation mb-3" id="checkout-validation">
+                {% for item in cart.items.all %}
+                    {% if item.quantity > item.product.stock or not item.product.available %}
+                    <div class="alert alert-danger d-flex align-items-center mb-2">
+                        <i class="fas fa-exclamation-circle me-2"></i>
+                        <div class="small">Please update your cart before checkout</div>
+                    </div>
+                    {% break %}
+                    {% endif %}
+                {% endfor %}
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="action-buttons">
+                <div class="d-grid gap-2">
+                    {% if cart.is_valid %}
+                    <a href="{% url 'checkout' %}" class="btn btn-success btn-lg py-3 fs-6" id="checkout-btn">
+                        <i class="fas fa-credit-card me-2"></i>
+                        Proceed to Checkout
+                    </a>
+                    {% else %}
+                    <button class="btn btn-secondary btn-lg py-3 fs-6" id="fix-cart-btn" disabled>
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        Fix Cart Issues to Checkout
+                    </button>
+                    {% endif %}
+                    
+                    <a href="{% url 'cart:clear_cart' %}" 
+                       class="btn btn-outline-danger py-2"
+                       onclick="return confirm('Are you sure you want to clear your entire cart?')">
+                        <i class="fas fa-trash me-2"></i>
+                        Clear Cart
+                    </a>
+                </div>
+            </div>
+
+            <!-- Security Badge -->
+            <div class="text-center mt-3">
+                <div class="security-badges">
+                    <small class="text-muted">
+                        <i class="fas fa-lock me-1"></i>
+                        Secure checkout • 
+                        <i class="fas fa-shipping-fast me-1"></i>
+                        Free shipping
+                    </small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% else %}
+    <!-- Empty Cart State -->
+    <div class="empty-cart-state d-flex align-items-center justify-content-center min-vh-100">
+        <div class="container py-5">
+            <div class="text-center py-5">
+                <div class="empty-cart-icon text-muted mb-4">
+                    <i class="fas fa-shopping-cart" style="font-size: 5rem;"></i>
+                </div>
+                <h2 class="h3 mb-3 fw-bold">Your cart is empty</h2>
+                <p class="text-muted mb-4 fs-5">
+                    Looks like you haven't added any items to your cart yet.
+                </p>
+                <a href="{% url 'product_list' %}" class="btn btn-primary btn-lg py-3 px-5 fs-5">
+                    <i class="fas fa-bag-shopping me-2"></i>
+                    Start Shopping
+                </a>
+            </div>
+        </div>
+    </div>
+    {% endif %}
 </div>
 {% endblock %}
 
 {% block extra_css %}
 <style>
-/* Custom styles to enhance Bootstrap */
+/* Mobile-First Cart Styles */
 .cart-page {
-    min-height: 70vh;
+    padding-bottom: 300px;
 }
 
-.page-title {
-    font-weight: 600;
+.cart-header {
+    z-index: 1030;
 }
 
-.cart-item-card .item-image img {
-    object-fit: cover;
-}
-
-.product-name {
-    font-weight: 500;
-    line-height: 1.3;
-}
-
-.quantity-form .input-group {
-    flex-wrap: nowrap;
-}
-
-.quantity-form .qty-input {
-    max-width: 60px;
-}
-
-.update-btn {
+.cart-item-card {
     transition: all 0.3s ease;
 }
 
-.stock-message {
-    font-size: 0.8rem;
+.cart-item-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1) !important;
 }
 
-.order-summary-sticky {
-    position: sticky;
-    bottom: 0;
-    background: white;
-    padding-top: 1rem;
-    box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
-    z-index: 10;
+.cart-item-image img {
+    object-fit: cover;
+    width: 100%;
+    height: 100%;
 }
 
-/* Desktop adjustments */
+.quantity-controls .input-group {
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.quantity-controls .btn {
+    padding: 0.375rem 0.5rem;
+    border-color: #dee2e6;
+}
+
+.quantity-controls .form-control {
+    border-left: none;
+    border-right: none;
+    font-weight: 600;
+    padding: 0.375rem 0.25rem;
+}
+
+
+.qty-input::-webkit-outer-spin-button,
+.qty-input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+/* Fixed Order Summary */
+.order-summary-fixed {
+    z-index: 1020;
+    max-height: 70vh;
+    overflow-y: auto;
+}
+
+/* Stock Status */
+.stock-status .badge {
+    font-size: 0.7rem;
+    padding: 0.3rem 0.6rem;
+}
+
+/* Button States */
+.btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* Responsive Text */
+.cart-item-title {
+    line-height: 1.3;
+    font-size: 0.95rem !important;
+}
+
+/* Desktop Adjustments */
 @media (min-width: 768px) {
-    .container-fluid {
-        max-width: 1200px;
+    .cart-page {
+        padding-bottom: 0;
     }
     
-    .cart-items-section {
-        margin-bottom: 2rem;
-    }
-    
-    .order-summary-sticky {
+    .order-summary-fixed {
         position: static;
-        box-shadow: none;
+        margin-top: 2rem;
+        border: 1px solid #dee2e6;
+        border-radius: 12px;
+        box-shadow: none !important;
+        max-height: none;
     }
     
-    .cart-actions-mobile {
+    .cart-header {
+        position: static;
+        border-radius: 0 0 12px 12px;
         margin-bottom: 2rem;
+    }
+    
+    .container {
+        max-width: 800px;
     }
 }
 
-/* Animation for quantity updates */
-@keyframes highlightUpdate {
-    0% { background-color: #28a745; }
-    100% { background-color: #007bff; }
+/* Large Desktop */
+@media (min-width: 1200px) {
+    .container {
+        max-width: 1000px;
+    }
 }
 
-.highlight-update {
-    animation: highlightUpdate 0.5s ease;
+/* Extra small devices */
+@media (max-width: 375px) {
+    .quantity-controls .input-group {
+        width: 120px !important;
+    }
+    
+    .cart-item-title {
+        font-size: 0.9rem !important;
+    }
+    
+    .btn-lg {
+        padding: 0.75rem 1rem !important;
+    }
 }
 
-/* Alert animations */
-@keyframes shake {
-    0%, 100% { transform: translateX(0); }
-    25% { transform: translateX(-5px); }
-    75% { transform: translateX(5px); }
+/* Validation Styles */
+.qty-input:invalid {
+    border-color: #dc3545;
+    background-color: #f8d7da;
 }
 
-.shake {
-    animation: shake 0.5s ease-in-out;
+.quantity-controls.invalid .btn {
+    border-color: #dc3545;
+}
+
+/* Toast Styles */
+.custom-toast {
+    animation: slideInDown 0.3s ease;
+}
+
+@keyframes slideInDown {
+    from {
+        transform: translate(-50%, -100%);
+        opacity: 0;
+    }
+    to {
+        transform: translate(-50%, 0);
+        opacity: 1;
+    }
+}
+
+/* Loading Animation */
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.loading {
+    animation: spin 1s linear infinite;
+}
+
+/* Smooth transitions */
+.cart-item-card,
+.btn,
+.form-control {
+    transition: all 0.3s ease;
 }
 </style>
 {% endblock %}
@@ -305,141 +706,307 @@
 {% block extra_js %}
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Quantity controls with stock validation
-    const quantityForms = document.querySelectorAll('.quantity-form');
+    // Quantity controls with real-time validation
+    const quantityInputs = document.querySelectorAll('.qty-input');
+    const cartSubtotal = document.querySelector('.cart-subtotal');
+    const cartTotal = document.querySelector('.cart-total');
     
-    quantityForms.forEach(form => {
-        const minusBtn = form.querySelector('.minus');
-        const plusBtn = form.querySelector('.plus');
-        const qtyInput = form.querySelector('.qty-input');
-        const updateBtn = form.querySelector('.update-btn');
-        const maxStock = parseInt(form.dataset.maxStock);
-        const itemId = qtyInput.dataset.itemId;
+    // Check if cart has validation issues
+    function checkCartValidity() {
+        let isValid = true;
+        let checkoutBtn = document.getElementById('checkout-btn');
+        let fixCartBtn = document.getElementById('fix-cart-btn');
+        let validationMessage = document.querySelector('.checkout-validation .alert');
+        
+        quantityInputs.forEach(input => {
+            const quantity = parseInt(input.value);
+            const maxStock = parseInt(input.dataset.stock);
+            
+            if (quantity > maxStock || quantity < 1) {
+                isValid = false;
+            }
+        });
+        
+        // Update checkout button state
+        if (isValid) {
+            if (checkoutBtn) checkoutBtn.style.display = 'block';
+            if (fixCartBtn) fixCartBtn.style.display = 'none';
+            if (validationMessage) validationMessage.style.display = 'none';
+        } else {
+            if (checkoutBtn) checkoutBtn.style.display = 'none';
+            if (fixCartBtn) fixCartBtn.style.display = 'block';
+            if (validationMessage) validationMessage.style.display = 'flex';
+        }
+        
+        return isValid;
+    }
+    
+    // Update item total price
+    function updateItemTotal(input) {
+        const quantity = parseInt(input.value);
+        const price = parseFloat(input.dataset.price);
+        const itemId = input.dataset.itemId;
+        const totalElement = document.querySelector(`[data-item-id="${itemId}"] .item-total`);
+        
+        if (totalElement) {
+            const total = (quantity * price).toFixed(2);
+            totalElement.textContent = total;
+        }
+    }
+    
+    // Update cart totals
+    function updateCartTotals() {
+        let subtotal = 0;
+        let totalQuantity = 0;
+        
+        quantityInputs.forEach(input => {
+            const quantity = parseInt(input.value);
+            const price = parseFloat(input.dataset.price);
+            subtotal += quantity * price;
+            totalQuantity += quantity;
+        });
+        
+        if (cartSubtotal) {
+            cartSubtotal.textContent = `₹${subtotal.toFixed(2)}`;
+        }
+        if (cartTotal) {
+            cartTotal.textContent = `₹${subtotal.toFixed(2)}`;
+        }
+        
+        // Update quantity in summary
+        const summaryQuantity = document.getElementById('summary-quantity');
+        const cartBadge = document.getElementById('cart-badge');
+        if (summaryQuantity) {
+            summaryQuantity.textContent = totalQuantity;
+        }
+        if (cartBadge) {
+            cartBadge.textContent = `${totalQuantity} item${totalQuantity !== 1 ? 's' : ''}`;
+        }
+    }
+    
+    // Validate quantity and show message
+    function validateQuantity(input) {
+        const quantity = parseInt(input.value);
+        const maxStock = parseInt(input.dataset.stock);
+        const itemId = input.dataset.itemId;
         const stockMessage = document.getElementById(`stock-message-${itemId}`);
+        const minusBtn = document.querySelector(`.minus[data-item-id="${itemId}"]`);
+        const plusBtn = document.querySelector(`.plus[data-item-id="${itemId}"]`);
+        const inputGroup = input.closest('.input-group');
         
-        let currentValue = parseInt(qtyInput.value);
-        
-        function validateQuantity(quantity) {
-            if (quantity > maxStock) {
-                showStockError(`Only ${maxStock} items available`);
-                return false;
-            }
-            if (quantity < 1) {
-                showStockError('Quantity must be at least 1');
-                return false;
-            }
-            hideStockError();
-            return true;
+        if (isNaN(quantity) || quantity < 1) {
+            showStockError(stockMessage, 'Quantity must be at least 1');
+            inputGroup.classList.add('invalid');
+            if (minusBtn) minusBtn.disabled = true;
+            return false;
         }
         
-        function showStockError(message) {
-            stockMessage.style.display = 'block';
-            stockMessage.querySelector('.stock-error').innerHTML = 
-                `<i class="fas fa-exclamation-circle me-1"></i>${message}`;
-            stockMessage.className = 'stock-message mt-2 alert alert-danger py-1';
+        if (quantity > maxStock) {
+            showStockError(stockMessage, `Only ${maxStock} items available`);
+            inputGroup.classList.add('invalid');
+            if (plusBtn) plusBtn.disabled = true;
+            return false;
         }
         
-        function hideStockError() {
-            stockMessage.style.display = 'none';
-            stockMessage.className = 'stock-message mt-2';
-        }
+        hideStockError(stockMessage);
+        inputGroup.classList.remove('invalid');
         
-        function updateQuantity(newValue) {
-            if (validateQuantity(newValue)) {
-                currentValue = newValue;
-                qtyInput.value = currentValue;
-                highlightUpdate();
+        // Update button states
+        if (minusBtn) minusBtn.disabled = quantity <= 1;
+        if (plusBtn) plusBtn.disabled = quantity >= maxStock;
+        
+        return true;
+    }
+    
+    function showStockError(element, message) {
+        if (element) {
+            element.style.display = 'block';
+            element.querySelector('.alert').textContent = message;
+        }
+    }
+    
+    function hideStockError(element) {
+        if (element) {
+            element.style.display = 'none';
+        }
+    }
+    
+    // Toast notification function
+    function showToast(message, type = 'info') {
+        // Remove existing toasts
+        document.querySelectorAll('.custom-toast').forEach(toast => toast.remove());
+        
+        const toast = document.createElement('div');
+        toast.className = `custom-toast position-fixed top-0 start-50 translate-middle-x mt-3 alert alert-${type} alert-dismissible fade show`;
+        toast.style.zIndex = '1060';
+        toast.style.minWidth = '300px';
+        
+        toast.innerHTML = `
+            ${message}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        `;
+        
+        document.body.appendChild(toast);
+        
+        // Auto remove after 3 seconds
+        setTimeout(() => {
+            if (toast.parentNode) {
+                toast.remove();
             }
-        }
+        }, 3000);
+    }
+    
+    // AJAX function to update cart
+    function updateCart(itemId, quantity) {
+        const formData = new FormData();
+        formData.append('quantity', quantity);
+        formData.append('csrfmiddlewaretoken', '{{ csrf_token }}');
         
-        // Decrease quantity
-        minusBtn.addEventListener('click', function() {
-            if (currentValue > 1) {
-                updateQuantity(currentValue - 1);
+        // Show loading state
+        const input = document.querySelector(`.qty-input[data-item-id="${itemId}"]`);
+        const buttons = document.querySelectorAll(`.qty-btn[data-item-id="${itemId}"]`);
+        
+        if (input) input.disabled = true;
+        buttons.forEach(btn => btn.disabled = true);
+        
+        fetch(`/cart/update/${itemId}/`, {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
             }
-        });
-        
-        // Increase quantity
-        plusBtn.addEventListener('click', function() {
-            if (currentValue < maxStock) {
-                updateQuantity(currentValue + 1);
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.success) {
+                showToast(data.message || 'Cart updated successfully', 'success');
+                
+                // Update cart totals from server data if available
+                if (data.cart_total) {
+                    document.querySelector('.cart-subtotal').textContent = `₹${data.cart_total}`;
+                    document.querySelector('.cart-total').textContent = `₹${data.cart_total}`;
+                }
+                if (data.total_quantity) {
+                    document.getElementById('summary-quantity').textContent = data.total_quantity;
+                    document.getElementById('cart-badge').textContent = `${data.total_quantity} item${data.total_quantity !== 1 ? 's' : ''}`;
+                }
+                
+                // Handle item removal
+                if (data.removed) {
+                    const itemElement = document.getElementById(`cart-item-${itemId}`);
+                    if (itemElement) {
+                        itemElement.remove();
+                        // Check if cart is empty
+                        if (document.querySelectorAll('.cart-item-card').length === 0) {
+                            window.location.reload();
+                        }
+                    }
+                }
             } else {
-                showStockError(`Maximum ${maxStock} items available`);
+                showToast(data.message || 'Failed to update cart', 'warning');
             }
+        })
+        .catch(error => {
+            console.error('Error updating cart:', error);
+            showToast('Error updating cart. Please try again.', 'error');
+        })
+        .finally(() => {
+            // Re-enable inputs
+            if (input) input.disabled = false;
+            buttons.forEach(btn => btn.disabled = false);
         });
+    }
+    
+    // Event listeners for quantity controls with debouncing
+    quantityInputs.forEach(input => {
+        const itemId = input.dataset.itemId;
+        const minusBtn = document.querySelector(`.minus[data-item-id="${itemId}"]`);
+        const plusBtn = document.querySelector(`.plus[data-item-id="${itemId}"]`);
         
-        // Input change
-        qtyInput.addEventListener('change', function() {
+        let inputTimeout;
+        
+        // Input change with debouncing
+        input.addEventListener('change', function() {
+            clearTimeout(inputTimeout);
+            
             let value = parseInt(this.value);
+            const maxStock = parseInt(this.dataset.stock);
+            
             if (isNaN(value) || value < 1) {
                 value = 1;
+                this.value = 1;
+            } else if (value > maxStock) {
+                value = maxStock;
+                this.value = maxStock;
+                showToast(`Only ${maxStock} items available`, 'warning');
             }
-            updateQuantity(value);
+            
+            validateQuantity(this);
+            updateItemTotal(this);
+            updateCartTotals();
+            checkCartValidity();
+            
+            // Auto-update cart via AJAX with debounce
+            inputTimeout = setTimeout(() => {
+                updateCart(itemId, value);
+            }, 800);
         });
         
-        // Input blur - auto update if valid
-        qtyInput.addEventListener('blur', function() {
-            if (validateQuantity(currentValue)) {
-                // Auto-submit the form if quantity is valid
-                setTimeout(() => {
-                    form.submit();
-                }, 500);
+        // Real-time validation during input
+        input.addEventListener('input', function() {
+            validateQuantity(this);
+        });
+        
+        // Minus button
+        minusBtn.addEventListener('click', function() {
+            let currentValue = parseInt(input.value);
+            if (currentValue > 1) {
+                input.value = currentValue - 1;
+                validateQuantity(input);
+                updateItemTotal(input);
+                updateCartTotals();
+                checkCartValidity();
+                updateCart(itemId, input.value);
             }
         });
         
-        // Form submission validation
-        form.addEventListener('submit', function(e) {
-            if (!validateQuantity(currentValue)) {
-                e.preventDefault();
-                form.classList.add('shake');
-                setTimeout(() => {
-                    form.classList.remove('shake');
-                }, 500);
+        // Plus button
+        plusBtn.addEventListener('click', function() {
+            let currentValue = parseInt(input.value);
+            const maxStock = parseInt(input.dataset.stock);
+            if (currentValue < maxStock) {
+                input.value = currentValue + 1;
+                validateQuantity(input);
+                updateItemTotal(input);
+                updateCartTotals();
+                checkCartValidity();
+                updateCart(itemId, input.value);
+            } else {
+                showToast(`Maximum ${maxStock} items available`, 'warning');
             }
         });
-        
-        function highlightUpdate() {
-            updateBtn.classList.add('highlight-update');
-            setTimeout(() => {
-                updateBtn.classList.remove('highlight-update');
-            }, 500);
-        }
         
         // Initial validation
-        validateQuantity(currentValue);
+        validateQuantity(input);
     });
     
-    // Check if any items exceed stock on page load
-    function validateCartOnLoad() {
-        let hasStockIssues = false;
-        quantityForms.forEach(form => {
-            const qtyInput = form.querySelector('.qty-input');
-            const maxStock = parseInt(form.dataset.maxStock);
-            const currentValue = parseInt(qtyInput.value);
-            
-            if (currentValue > maxStock) {
-                hasStockIssues = true;
-                // Auto-correct the quantity to max available
-                qtyInput.value = maxStock;
-                // Show message and suggest update
-                const itemId = qtyInput.dataset.itemId;
-                const stockMessage = document.getElementById(`stock-message-${itemId}`);
-                showStockMessage(stockMessage, `Quantity adjusted to maximum available (${maxStock})`);
+    // Initial cart validation
+    checkCartValidity();
+    
+    // Prevent checkout if cart is invalid
+    document.addEventListener('click', function(e) {
+        if (e.target.closest('a[href*="checkout"]')) {
+            if (!checkCartValidity()) {
+                e.preventDefault();
+                showToast('Please fix cart issues before proceeding to checkout.', 'warning');
             }
-        });
-        
-        return !hasStockIssues;
-    }
-    
-    function showStockMessage(element, message) {
-        element.style.display = 'block';
-        element.querySelector('.stock-error').innerHTML = 
-            `<i class="fas fa-info-circle me-1"></i>${message}`;
-        element.className = 'stock-message mt-2 alert alert-info py-1';
-    }
-    
-    // Run validation on page load
-    validateCartOnLoad();
+        }
+    });
 });
 </script>
 {% endblock %}
