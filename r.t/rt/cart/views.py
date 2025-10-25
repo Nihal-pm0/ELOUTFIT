@@ -46,56 +46,24 @@ def remove_from_cart(request, item_id):
     messages.success(request, f'{product_name} removed from cart!')
     return redirect('cart:cart_detail')
 
-from django.http import JsonResponse
-from django.contrib import messages
-
+@login_required
 def update_cart(request, item_id):
     if request.method == 'POST':
         quantity = int(request.POST.get('quantity', 1))
         cart_item = get_object_or_404(CartItem, id=item_id, cart__user=request.user)
         
-        response_data = {}
-        
         # Stock validation
         if quantity > cart_item.product.stock:
-            message = f'Only {cart_item.product.stock} items available for {cart_item.product.name}'
-            if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
-                response_data = {
-                    'success': False,
-                    'message': message
-                }
-            else:
-                messages.warning(request, message)
+            messages.warning(request, f'Only {cart_item.product.stock} items available for {cart_item.product.name}')
             quantity = cart_item.product.stock
         
         if quantity < 1:
             cart_item.delete()
-            message = 'Item removed from cart'
-            if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
-                response_data = {
-                    'success': True,
-                    'message': message,
-                    'removed': True
-                }
-            else:
-                messages.success(request, message)
+            messages.success(request, 'Item removed from cart')
         else:
             cart_item.quantity = quantity
             cart_item.save()
-            message = 'Cart updated successfully'
-            if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
-                response_data = {
-                    'success': True,
-                    'message': message,
-                    'cart_total': str(cart_item.cart.total_price),
-                    'total_quantity': cart_item.cart.total_quantity
-                }
-            else:
-                messages.success(request, message)
-        
-        # Return JSON response for AJAX requests
-        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
-            return JsonResponse(response_data)
+            messages.success(request, 'Cart updated successfully')
         
         return redirect('cart:cart_detail')
 
