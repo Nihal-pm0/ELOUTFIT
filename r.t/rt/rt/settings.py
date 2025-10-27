@@ -28,9 +28,11 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.getenv('SECRET_KEY')
 
-# SECURITY WARNING: don't run with debug turned on in production!
-<<<<<<< Updated upstream
-
+# SECURITY WARNING: don't run with debug turned on in product
+handler404 = 'app.views.test_404' 
+handler500 = 'app.views.test_500'
+handler403 = 'app.views.test_403'
+handler400 = 'app.views.test_400'
 DEBUG = False
 
 
@@ -38,8 +40,7 @@ CSRF_TRUSTED_ORIGINS = os.getenv('CSRF_TRUSTED_ORIGINS', 'https://localhost').sp
 
 
 ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', 'localhost,127.0.0.1,3.25.218.242,eloutfit.store,www.eloutfit.store').split(',')
-# Application definition
-=======
+
 DEBUG =  True
 CSRF_TRUSTED_ORIGINS = [
     'https://eloutfit.store',
@@ -51,7 +52,7 @@ ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')
 
 
 # Application definitio
->>>>>>> Stashed changes
+
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
