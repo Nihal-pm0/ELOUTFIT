@@ -36,6 +36,7 @@ handler403 = 'app.views.test_403'
 handler400 = 'app.views.test_400'
 DEBUG = False
 
+
 CSRF_TRUSTED_ORIGINS = os.getenv('CSRF_TRUSTED_ORIGINS', 'https://localhost').split(',')
 
 
