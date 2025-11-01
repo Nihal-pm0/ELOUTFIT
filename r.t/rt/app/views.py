@@ -106,7 +106,7 @@ class ContactView(TemplateView):
             subject,
             message,
             settings.DEFAULT_FROM_EMAIL,
-            ['revibe.threadss@gmail.com'],  # Your official email
+            ['eloutfit.inn@gmail.com'],  # Your official email
             fail_silently=False,
         )
 
@@ -137,34 +137,16 @@ def search_products(request):
         'results_count': products.count()
     })
 
-
 from django.shortcuts import render
-from django.http import HttpResponse
-from django.views.decorators.http import require_GET
 
-# Your existing views...
-
-@require_GET
-def error_test_dashboard(request):
-    """Public error testing dashboard"""
-    return render(request, 'error_test_dashboard.html')
-
-@require_GET
-def test_404(request):
-    """Test 404 page"""
+def handler404(request, exception):
     return render(request, '404.html', status=404)
 
-@require_GET
-def test_500(request):
-    """Test 500 page"""
+def handler500(request):
     return render(request, '500.html', status=500)
 
-@require_GET
-def test_403(request):
-    """Test 403 page"""
+def handler403(request, exception=None):
     return render(request, '403.html', status=403)
 
-@require_GET
-def test_400(request):
-    """Test 400 page"""
+def handler400(request, exception=None):
     return render(request, '400.html', status=400)
