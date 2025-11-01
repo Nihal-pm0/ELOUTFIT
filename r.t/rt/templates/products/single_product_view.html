@@ -617,6 +617,15 @@ body {
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
   }
 }
+body {
+  padding-top: 80px; /* desktop header height */
+}
+
+@media (max-width: 768px) {
+  body {
+    padding-top: 100px; /* taller mobile header */
+  }
+}
 
 </style>
 {% endblock %}
