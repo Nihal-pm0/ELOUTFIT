@@ -40,12 +40,6 @@ CSRF_TRUSTED_ORIGINS = os.getenv('CSRF_TRUSTED_ORIGINS', 'https://localhost').sp
 
 
 ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', 'localhost,127.0.0.1,3.25.218.242,eloutfit.store,www.eloutfit.store').split(',')
-
-DEBUG =  True
-CSRF_TRUSTED_ORIGINS = [
-    'https://eloutfit.store',
-    'https://www.eloutfit.store',
-]
 # In settings.py - use environment variables
 ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')
 
