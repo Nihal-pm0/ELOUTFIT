@@ -597,6 +597,27 @@ body {
         padding: 0.5rem 0.75rem;
     }
 }
+/* --- Mobile Overlap Fix --- */
+@media (max-width: 768px) {
+  .col-lg-6 {
+    width: 100%;
+  }
+
+  .main-image-container {
+    position: relative;
+    z-index: 1;
+    margin-bottom: 20px; /* creates space below image */
+  }
+
+  .product-details {
+    position: relative;
+    z-index: 2;
+    background: #fff;
+    margin-top: 0;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  }
+}
+
 </style>
 {% endblock %}
 
