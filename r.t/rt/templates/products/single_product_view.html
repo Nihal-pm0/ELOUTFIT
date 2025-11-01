@@ -383,151 +383,204 @@
 </div>
 {% endif %}
 {% endblock %}
+
 {% block extra_css %}
 <style>
-/* ----------- Base styles ----------- */
 body {
     font-family: 'Poppins', sans-serif;
     background-color: #f8f9fa;
+    color: #333;
 }
 
-.product-detail-container {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    align-items: flex-start;
-    gap: 2rem;
-    padding: 2rem;
+/* Product Section */
+.container {
     max-width: 1200px;
-    margin: auto;
 }
 
+/* ---------- Product Image ---------- */
 .main-image-container {
-    flex: 1 1 400px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
+    text-align: center;
+    background-color: #fff;
+    border-radius: 12px;
+    padding: 1rem;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.08);
 }
 
 .main-product-image {
     width: 100%;
-    max-width: 450px;
-    height: auto;
-    border-radius: 12px;
+    max-height: 450px;
     object-fit: contain;
-    background: #fff;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    border-radius: 10px;
 }
 
+/* Thumbnails */
 .thumbnails {
     display: flex;
     justify-content: center;
     gap: 8px;
-    margin-top: 12px;
+    margin-top: 10px;
 }
-
-.thumbnails img {
+.thumbnail img {
     width: 60px;
     height: 60px;
-    object-fit: cover;
     border-radius: 8px;
     border: 2px solid transparent;
+    object-fit: cover;
     cursor: pointer;
-    transition: 0.3s;
+    transition: border-color 0.3s ease;
+}
+.thumbnail.active img,
+.thumbnail img:hover {
+    border-color: #007bff;
 }
 
-.thumbnails img:hover {
-    border-color: #000;
-}
-
-/* ----------- Product Info ----------- */
-.product-info {
-    flex: 1 1 400px;
+/* ---------- Product Details ---------- */
+.product-details {
     background: #fff;
     border-radius: 12px;
     padding: 1.5rem;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
 }
 
-.product-title {
+.product-details h1 {
     font-size: 1.8rem;
     font-weight: 600;
-    margin-bottom: 0.5rem;
 }
 
-.product-price {
-    font-size: 1.4rem;
-    color: #2c3e50;
-    margin-bottom: 1rem;
+.price-section h3 {
+    font-size: 1.6rem;
+    color: #dc3545;
 }
 
-.product-description {
-    font-size: 1rem;
-    line-height: 1.6;
-    color: #555;
-    margin-bottom: 1.5rem;
-}
-
-.add-to-cart-btn {
-    background-color: #212529;
-    color: white;
-    border: none;
-    border-radius: 10px;
-    padding: 10px 20px;
+/* Buttons */
+.add-to-cart-btn,
+.buy-now-btn {
     font-weight: 600;
-    transition: 0.3s;
-    width: 100%;
+    border-radius: 8px;
+    padding: 0.75rem;
+    transition: all 0.3s ease;
 }
-
 .add-to-cart-btn:hover {
     background-color: #000;
 }
+.buy-now-btn {
+    background-color: #28a745;
+    color: #fff;
+}
+.buy-now-btn:hover {
+    background-color: #218838;
+}
 
-/* ----------- Tablet ----------- */
+/* Quick Features */
+.quick-features small {
+    font-size: 0.9rem;
+}
+
+/* ---------- Tabs ---------- */
+.nav-tabs .nav-link {
+    border: none;
+    font-weight: 500;
+    color: #555;
+}
+.nav-tabs .nav-link.active {
+    color: #007bff;
+    border-bottom: 3px solid #007bff;
+}
+
+/* ---------- Related Products ---------- */
+.product-card img {
+    transition: transform 0.3s ease;
+}
+.product-card:hover img {
+    transform: scale(1.05);
+}
+
+/* ---------- Fixed Mobile Cart ---------- */
+.fixed-mobile-cart {
+    background: #fff;
+    box-shadow: 0 -2px 8px rgba(0,0,0,0.1);
+    padding: 10px;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 1050;
+    border-top: 1px solid #e5e5e5;
+}
+.fixed-mobile-cart .btn {
+    border-radius: 6px;
+}
+
+/* ---------- Responsive Design ---------- */
 @media (max-width: 992px) {
-    .product-detail-container {
-        flex-direction: column;
-        align-items: center;
-        padding: 1.5rem;
-    }
-
-    .main-product-image {
-        max-width: 400px;
-    }
-
-    .product-info {
-        width: 100%;
-        max-width: 600px;
+    .product-details {
+        margin-top: 20px;
     }
 }
 
-/* ----------- Mobile ----------- */
 @media (max-width: 768px) {
-    .product-detail-container {
-        padding: 1rem;
-        gap: 1.5rem;
+    .breadcrumb {
+        font-size: 0.85rem;
     }
 
     .main-product-image {
-        max-width: 100%;
-        height: auto;
-        object-fit: contain;
-        background: #fff;
+        max-height: 350px;
     }
 
-    .product-info {
+    .product-details {
         padding: 1rem;
     }
 
-    .product-title {
+    .product-details h1 {
+        font-size: 1.5rem;
+        text-align: center;
+    }
+
+    .price-section h3 {
         font-size: 1.4rem;
         text-align: center;
     }
 
-    .product-price {
-        font-size: 1.2rem;
+    .price-section p {
         text-align: center;
+    }
+
+    .quantity-selector,
+    .action-buttons {
+        display: flex;
+        justify-content: center;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .add-to-cart-btn,
+    .buy-now-btn {
+        width: 100%;
+        font-size: 1rem;
+        margin-bottom: 10px;
+    }
+
+    .quick-features .col-6 {
+        width: 50%;
+    }
+}
+
+@media (max-width: 576px) {
+    .main-product-image {
+        max-height: 300px;
+    }
+
+    .thumbnails img {
+        width: 50px;
+        height: 50px;
+    }
+
+    .product-details h1 {
+        font-size: 1.3rem;
+    }
+
+    .price-section h3 {
+        font-size: 1.2rem;
     }
 
     .product-description {
@@ -535,35 +588,13 @@ body {
         text-align: center;
     }
 
-    .add-to-cart-btn {
-        font-size: 1rem;
-        width: 100%;
+    .action-buttons .btn {
+        font-size: 0.95rem;
     }
 
-    .thumbnails img {
-        width: 50px;
-        height: 50px;
-    }
-}
-
-/* ----------- Very small phones ----------- */
-@media (max-width: 480px) {
-    .main-product-image {
-        max-width: 100%;
-        max-height: 160px;
-    }
-
-    .product-title {
-        font-size: 1.2rem;
-    }
-
-    .product-price {
-        font-size: 1rem;
-    }
-
-    .thumbnails img {
-        width: 45px;
-        height: 45px;
+    .fixed-mobile-cart .btn {
+        font-size: 0.9rem;
+        padding: 0.5rem 0.75rem;
     }
 }
 </style>
