@@ -28,8 +28,11 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.getenv('SECRET_KEY')
 
-# SECURITY WARNING: don't run with debug turned on in production!
-
+# SECURITY WARNING: don't run with debug turned on in product
+handler404 = 'app.views.test_404' 
+handler500 = 'app.views.test_500'
+handler403 = 'app.views.test_403'
+handler400 = 'app.views.test_400'
 DEBUG = False
 
 
@@ -37,7 +40,19 @@ CSRF_TRUSTED_ORIGINS = os.getenv('CSRF_TRUSTED_ORIGINS', 'https://localhost').sp
 
 
 ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', 'localhost,127.0.0.1,3.25.218.242,eloutfit.store,www.eloutfit.store').split(',')
-# Application definition
+
+DEBUG =  True
+CSRF_TRUSTED_ORIGINS = [
+    'https://eloutfit.store',
+    'https://www.eloutfit.store',
+]
+# In settings.py - use environment variables
+ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')
+
+
+
+# Application definitio
+
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -71,8 +86,8 @@ LOGOUT_REDIRECT_URL = '/'
 PASSWORD_RESET_TIMEOUT = 3600  # 1 hour
 
 # Razorpay Configuration
-RAZORPAY_KEY_ID = os.getenv('RAZORPAY_KEY_ID')
-RAZORPAY_KEY_SECRET = os.getenv('RAZORPAY_KEY_SECRET')
+RAZORPAY_KEY_ID = os.getenv('RAZORPAY_KEY_ID')  # Test key as fallback
+RAZORPAY_KEY_SECRET = os.getenv('RAZORPAY_KEY_SECRET')  
 CURRENCY = 'INR'
 
 MIDDLEWARE = [
@@ -181,9 +196,16 @@ MEDIA_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
-# if not DEBUG:
-#     SECURE_SSL_REDIRECT = True
-#     SESSION_COOKIE_SECURE = True
-#     CSRF_COOKIE_SECURE = True  # ← This blocks CSRF on HTTP
-#     SECURE_BROWSER_XSS_FILTER = True
-#     SECURE_CONTENT_TYPE_NOSNIFF = True
+# SSL Settings for Cloudflare
+SECURE_SSL_REDIRECT = False  # Cloudflare handles redirects
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+USE_X_FORWARDED_HOST = True
+USE_X_FORWARDED_PORT = True
+
+# Security headers (safe to keep)
+SECURE_BROWSER_XSS_FILTER = True
+SECURE_CONTENT_TYPE_NOSNIFF = True
+
+# Comment these out for now:
+# SESSION_COOKIE_SECURE = True
+# CSRF_COOKIE_SECURE = True
