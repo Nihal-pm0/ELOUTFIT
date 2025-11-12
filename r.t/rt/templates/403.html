@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block title %}Access Denied - 403{% endblock %}
+
+{% block content %}
+<div class="container text-center py-5">
+    <div class="error-page">
+        <h1>403</h1>
+        <h2>Access Denied</h2>
+        <p>You don't have permission to access this page.</p>
+        <div class="mt-4">
+            <a href="{% url 'home' %}" class="btn btn-primary">Go Home</a>
+            <a href="{% url 'error_test_dashboard' %}" class="btn btn-outline-secondary">Error Tests</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

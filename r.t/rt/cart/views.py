@@ -48,21 +48,24 @@ def remove_from_cart(request, item_id):
 
 @login_required
 def update_cart(request, item_id):
-    cart_item = get_object_or_404(CartItem, id=item_id, cart__user=request.user)
-    
     if request.method == 'POST':
         quantity = int(request.POST.get('quantity', 1))
+        cart_item = get_object_or_404(CartItem, id=item_id, cart__user=request.user)
         
-        if quantity > 0:
+        # Stock validation
+        if quantity > cart_item.product.stock:
+            messages.warning(request, f'Only {cart_item.product.stock} items available for {cart_item.product.name}')
+            quantity = cart_item.product.stock
+        
+        if quantity < 1:
+            cart_item.delete()
+            messages.success(request, 'Item removed from cart')
+        else:
             cart_item.quantity = quantity
             cart_item.save()
-            messages.success(request, 'Cart updated successfully!')
-        else:
-            # If quantity is 0, remove the item
-            cart_item.delete()
-            messages.success(request, 'Item removed from cart!')
-    
-    return redirect('cart:cart_detail')
+            messages.success(request, 'Cart updated successfully')
+        
+        return redirect('cart:cart_detail')
 
 @login_required
 def clear_cart(request):

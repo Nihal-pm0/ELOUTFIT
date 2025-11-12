@@ -1,15 +1,11 @@
 from django.contrib import admin
+from django.http import HttpResponse
+from django.shortcuts import render
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 from . import views
 
-from django.conf.urls import handler404, handler500, handler403, handler400
-
-handler404 = 'app.views.custom_404'
-handler500 = 'app.views.custom_500'
-handler403 = 'app.views.custom_403'
-handler400 = 'app.views.custom_400'
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -23,6 +19,10 @@ urlpatterns = [
     path('contact/', views.ContactView.as_view(), name='contact'),
     path('contact/success/', views.contact_success, name='contact_success'),
     path('search/', views.search_products, name='search'),
-    
 ] 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+handler404 = 'app.views.handler404'
+handler500 = 'app.views.handler500'
+handler403 = 'app.views.handler403'
+handler400 = 'app.views.handler400'

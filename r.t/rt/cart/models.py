@@ -17,6 +17,14 @@ class Cart(models.Model):
     @property
     def total_quantity(self):
         return sum(item.quantity for item in self.items.all())
+    
+    @property
+    def is_valid(self):
+        """Check if all items in cart are available and in stock"""
+        for item in self.items.all():
+            if not item.product.available or item.quantity > item.product.stock:
+                return False
+        return True
 
 class CartItem(models.Model):
     cart = models.ForeignKey(Cart, related_name='items', on_delete=models.CASCADE)
