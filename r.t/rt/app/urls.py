@@ -21,8 +21,3 @@ urlpatterns = [
     path('search/', views.search_products, name='search'),
 ] 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
-
-handler404 = 'app.views.handler404'
-handler500 = 'app.views.handler500'
-handler403 = 'app.views.handler403'
-handler400 = 'app.views.handler400'

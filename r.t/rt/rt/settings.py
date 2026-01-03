@@ -28,11 +28,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.getenv('SECRET_KEY')
 
-# SECURITY WARNING: don't run with debug turned on in product
-handler404 = 'app.views.test_404' 
-handler500 = 'app.views.test_500'
-handler403 = 'app.views.test_403'
-handler400 = 'app.views.test_400'
+
 DEBUG = False
 
 
