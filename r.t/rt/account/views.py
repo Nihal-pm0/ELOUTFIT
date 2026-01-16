@@ -4,14 +4,25 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from .forms import UserRegistrationForm, UserProfileForm, UserUpdateForm
 from order.models import Order
+from django.views.decorators.cache import never_cache
+
+
 def custom_logout(request):
     logout(request)
     messages.success(request, 'You have been successfully logged out.')
     return redirect('home')
 from django.views.decorators.csrf import csrf_protect
 
+
 @csrf_protect
+@never_cache
 def custom_login(request):
+    # 🔒 BLOCK ACCESS AFTER LOGIN
+    if request.user.is_authenticated:
+        if request.user.is_superuser:
+            return redirect('/admin/')
+        return redirect('home')
+
     if request.method == 'POST':
         username = request.POST.get('username')
         password = request.POST.get('password')
@@ -19,8 +30,7 @@ def custom_login(request):
         
         if user is not None:
             login(request, user)
-            
-            # Redirect superusers to admin panel
+
             if user.is_superuser:
                 messages.success(request, 'Welcome back, Admin!')
                 return redirect('/admin/')
@@ -29,8 +39,9 @@ def custom_login(request):
                 return redirect('home')
         else:
             messages.error(request, 'Invalid username or password.')
-    
+
     return render(request, 'accounts/login.html')
+
 
 def register(request):
     if request.method == 'POST':
@@ -116,6 +127,7 @@ from django.core.mail import send_mail
 from django.conf import settings
 from django.urls import reverse
 from django.http import HttpResponse
+
 
 def custom_password_reset(request):
     if request.method == 'POST':
